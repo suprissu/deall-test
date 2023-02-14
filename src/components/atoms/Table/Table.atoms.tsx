@@ -12,8 +12,9 @@ import {
 // #endregion IMPORTS
 
 // #region TW STYLES
-const containerStyle = "w-full h-96 flex-grow border-collapse overflow-auto";
-const tableStyle = "w-full relative z-0 border border-info-100 rounded-xl";
+const containerStyle =
+  "w-full h-96 flex-grow border-collapse border border-info-200 rounded-xl overflow-auto";
+const tableStyle = "w-full relative z-0";
 const theadStyle = "sticky -top-[1px] z-index[1] bg-info-200 m-0";
 const thStyle =
   "sticky top-0 z-index[4] px-4 py-2 capitalize text-left hover:bg-info-300";
