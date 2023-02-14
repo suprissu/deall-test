@@ -1,4 +1,5 @@
 // #region IMPORTS
+import { Sidebar } from "@/components/organisms";
 import { MainTemplate } from "@/components/templates";
 import React from "react";
 // #endregion IMPORTS
@@ -18,7 +19,10 @@ export default function DashboardTemplate({
 }: React.PropsWithChildren<DashboardTemplateProps>) {
   return (
     <MainTemplate title={title} description={description}>
-      <main className="p-4">{children}</main>
+      <div className="flex">
+        <Sidebar />
+        <main className="p-4 flex-1 bg-info-100">{children}</main>
+      </div>
     </MainTemplate>
   );
 }
