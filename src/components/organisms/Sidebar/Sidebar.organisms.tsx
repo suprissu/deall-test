@@ -1,9 +1,13 @@
 // #region IMPORTS
 import Link from "next/link";
+import { useRouter } from "next/router";
 // #endregion IMPORTS
 
 // #region MAIN COMPONENT
 export default function Sidebar() {
+  const router = useRouter();
+  const { pathname } = router;
+
   const sidebarList = [
     {
       name: "Products",
@@ -23,7 +27,13 @@ export default function Sidebar() {
       <div className="flex-1 flex flex-col p-4">
         {sidebarList.map((data, index) => (
           <Link key={index} href={data.path} passHref>
-            <div className="px-6 py-4 border-l-4 border-transparent hover:bg-primary-600 hover:border-secondary-200">
+            <div
+              className={`px-6 py-4 border-l-4 hover:bg-primary-600 ${
+                pathname === data.path
+                  ? "border-secondary-200"
+                  : "border-transparent"
+              }`}
+            >
               {data.name}
             </div>
           </Link>
