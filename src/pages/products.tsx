@@ -42,23 +42,26 @@ export default function Products({
     () => productsResponse.products,
     [productsResponse.products]
   );
-  const columns: ColumnDef<Product>[] = [
-    {
-      accessorKey: "title",
-    },
-    {
-      accessorKey: "brand",
-    },
-    {
-      accessorKey: "price",
-    },
-    {
-      accessorKey: "stock",
-    },
-    {
-      accessorKey: "category",
-    },
-  ];
+  const columns: ColumnDef<Product>[] = useMemo(
+    () => [
+      {
+        accessorKey: "title",
+      },
+      {
+        accessorKey: "brand",
+      },
+      {
+        accessorKey: "price",
+      },
+      {
+        accessorKey: "stock",
+      },
+      {
+        accessorKey: "category",
+      },
+    ],
+    []
+  );
 
   return (
     <DashboardTemplate title="Products">
