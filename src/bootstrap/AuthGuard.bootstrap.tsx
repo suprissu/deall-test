@@ -1,4 +1,5 @@
 // #region IMPORTS
+import { useSession } from "@/context/Session.context";
 import { AppRouter } from "@/domains/Endpoints.domains";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -17,8 +18,9 @@ export default function AuthGuardBootstrap({
   guard,
   portal,
 }: React.PropsWithChildren<AuthGuardBootstrapProps>) {
+  const { session } = useSession();
   const router = useRouter();
-  const isAuthenticated = false;
+  const isAuthenticated = Boolean(session?.token);
 
   useEffect(() => {
     if (portal && isAuthenticated) router.push(AppRouter.PRODUCTS);
