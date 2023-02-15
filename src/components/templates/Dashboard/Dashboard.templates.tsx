@@ -18,7 +18,7 @@ export default function DashboardTemplate({
   description,
 }: React.PropsWithChildren<DashboardTemplateProps>) {
   return (
-    <MainTemplate title={title} description={description}>
+    <MainTemplate title={title} description={description} guard>
       <div className="flex">
         <Sidebar />
         <main className="p-4 flex-1 bg-info-100">{children}</main>

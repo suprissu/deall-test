@@ -1,5 +1,5 @@
 // #region IMPORTS
-import React from "react";
+import React, { useMemo } from "react";
 // #endregion IMPORTS
 
 // #region PROPS
@@ -7,32 +7,32 @@ const styleMapping = (
   disabled?: boolean
 ): Record<string, Record<string, string>> => ({
   solid: {
-    primary: `text-white text-xs active:bg-primary-700 ${
+    primary: `text-white active:bg-primary-700 ${
       disabled
         ? "bg-primary-50 text-primary-200"
         : "bg-primary-500 hover:shadow-md hover:shadow-primary-100 hover:bg-primary-600"
     }`,
-    secondary: `text-white text-xs active:bg-secondary-700 ${
+    secondary: `text-white active:bg-secondary-700 ${
       disabled
         ? "bg-secondary-50 text-secondary-200"
         : "bg-secondary-500 hover:shadow-md hover:shadow-secondary-100 hover:bg-secondary-600"
     }`,
-    error: `text-white text-xs active:bg-error-700 ${
+    error: `text-white active:bg-error-700 ${
       disabled
         ? "bg-error-50 text-error-200"
         : "bg-error-500 hover:shadow-md hover:shadow-error-100 hover:bg-error-600"
     }`,
-    success: `text-white text-xs active:bg-success-700 ${
+    success: `text-white active:bg-success-700 ${
       disabled
         ? "bg-success-50 text-success-200"
         : "bg-success-500 hover:shadow-md hover:shadow-success-100 hover:bg-success-600"
     }`,
-    warning: `text-white text-xs active:bg-warning-700 ${
+    warning: `text-white active:bg-warning-700 ${
       disabled
         ? "bg-warning-50 text-warning-200"
         : "bg-warning-500 hover:shadow-md hover:shadow-warning-100 hover:bg-warning-600"
     }`,
-    info: `text-black text-xs active:bg-info-400 ${
+    info: `text-black active:bg-info-400 ${
       disabled
         ? "bg-info-50 text-info-200"
         : "bg-info-200 hover:shadow-md hover:shadow-info-50 hover:bg-info-300"
@@ -90,6 +90,7 @@ type ButtonProps = React.DetailedHTMLProps<
   types?: "solid" | "outline" | "basic";
   rounded?: boolean;
   icon?: JSX.Element;
+  sizes?: "narrow" | "tiny";
 };
 // #endregion PROPS
 
@@ -98,21 +99,29 @@ export default function Button({
   children,
   variants = "primary",
   types = "solid",
+  sizes,
   rounded,
   icon,
   disabled,
   className,
   ...props
 }: React.PropsWithChildren<ButtonProps>) {
+  const sizeButtonStyle = useMemo(() => {
+    if (sizes === "narrow") return "text-sm";
+    if (sizes === "tiny") return "text-xs";
+    return "text-base";
+  }, [sizes]);
+
   return (
     <button
       {...props}
       className={`
-    'capitalize text-sm transition-all flex items-center justify-center gap-2'
+    'capitalize transition-all flex items-center justify-center gap-2'
     ${icon && !children ? "w-10 h-10" : "px-4 py-2"}
     ${styleMapping(disabled)[types][variants]}
     ${rounded ? "rounded-full" : "rounded"}
     ${disabled && "cursor-not-allowed"}
+    ${sizeButtonStyle}
     ${className}
     `}
     >

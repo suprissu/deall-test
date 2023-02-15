@@ -5,11 +5,11 @@ import { Endpoints } from "@/domains/Endpoints.domains";
 import { Product, ProductResponse } from "@/domains/Types.domains";
 import { ColumnDef } from "@tanstack/react-table";
 import axios from "axios";
-import { NextPageContext } from "next";
+import { GetServerSideProps } from "next";
 import React, { useMemo } from "react";
 // #endregion IMPORTS
 
-export async function getServerSideProps({ res }: NextPageContext) {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const { data } = await axios.get(Endpoints.GET_PRODUCTS).catch((e) => {
     throw new Error("Cannot fetch products from server", { cause: e });
   });
@@ -26,7 +26,7 @@ export async function getServerSideProps({ res }: NextPageContext) {
       products: data,
     },
   };
-}
+};
 
 // #region PROPS
 type ProductsProps = {
