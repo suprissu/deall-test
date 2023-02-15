@@ -2,7 +2,7 @@
 import { Table } from "@/components/atoms";
 import { DashboardTemplate } from "@/components/templates";
 import { Endpoints } from "@/domains/Endpoints.domains";
-import { Cart, CartsResponse } from "@/domains/Types.domains";
+import { Cart, CartsResponse, LoginResponse } from "@/domains/Types.domains";
 import { ColumnDef } from "@tanstack/react-table";
 import axios from "axios";
 import { GetServerSideProps } from "next";
@@ -10,15 +10,17 @@ import React, { useEffect, useMemo } from "react";
 // #endregion IMPORTS
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const { id } = req.cookies;
-  if (!id) return { props: { carts: null } };
+  const cSession = req.cookies["_session"];
+  const session = JSON.parse(cSession ?? "") as LoginResponse;
+
+  if (!session || !session.id) return { props: { carts: null } };
 
   const { data } = await axios
-    .get(Endpoints.GET_CARTS.replace(":id", id))
+    .get(Endpoints.GET_CARTS.replace(":id", String(session.id)))
     .catch((e) => {
       throw new Error("Cannot fetch carts from server", { cause: e });
     });
-
+  console.log(data);
   if (res) {
     res.setHeader(
       "Cache-Control",
@@ -48,19 +50,16 @@ export default function Carts({ carts: cartsResponse }: CartsProps) {
   const columns: ColumnDef<Cart>[] = useMemo(
     () => [
       {
-        accessorKey: "title",
+        accessorKey: "userId",
       },
       {
-        accessorKey: "brand",
+        accessorKey: "totalQuantity",
       },
       {
-        accessorKey: "price",
+        accessorKey: "total",
       },
       {
-        accessorKey: "stock",
-      },
-      {
-        accessorKey: "category",
+        accessorKey: "totalProducts",
       },
     ],
     []
