@@ -27,6 +27,8 @@ export default function AuthGuardBootstrap({
     }
   }, [guard, isAuthenticated, portal, router]);
 
+  if (guard && !isAuthenticated) return null;
+
   return <>{children}</>;
 }
 // #endregion MAIN COMPONENT
