@@ -19,20 +19,23 @@ type InputProps = React.DetailedHTMLProps<
 // #endregion PROPS
 
 // #region MAIN COMPONENT
-export default function Input({
-  className,
-  disabled,
-  sizes,
-  value,
-  label,
-  id,
-  placeholder,
-  description,
-  type,
-  error,
-  touched,
-  ...props
-}: InputProps) {
+const Input = (
+  {
+    className,
+    disabled,
+    sizes,
+    value,
+    label,
+    id,
+    placeholder,
+    description,
+    type,
+    error,
+    touched,
+    ...props
+  }: InputProps,
+  ref: React.ForwardedRef<HTMLInputElement>
+) => {
   const [isPasswordType, togglePasswordType] = useToggle(type === "password");
 
   const sizeInputStyleMap = useMemo(() => {
@@ -65,6 +68,7 @@ export default function Input({
       </label>
       <div className="relative">
         <input
+          ref={ref}
           id={id}
           name={id}
           type={typeMap}
@@ -94,5 +98,7 @@ export default function Input({
       {touched && error && <p className="text-error-500">{error}</p>}
     </div>
   );
-}
+};
 // #endregion MAIN COMPONENT
+
+export default React.forwardRef(Input);

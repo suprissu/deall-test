@@ -1,3 +1,19 @@
+export type LoginParams = {
+  username: string;
+  password: string;
+};
+
+export type LoginResponse = {
+  email: string;
+  firstName: string;
+  gender: string;
+  id: number;
+  image: string;
+  lastName: string;
+  token: string;
+  username: string;
+};
+
 export type Product = {
   id: number;
   title: string;
