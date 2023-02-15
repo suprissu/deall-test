@@ -10,6 +10,11 @@ import { Endpoints } from "@/domains/Endpoints.domains";
 import { useSession } from "@/context/Session.context";
 // #endregion IMPORTS
 
+const defaultUser = {
+  username: "atuny0",
+  password: "9uQFF1Lh",
+};
+
 // #region MAIN COMPONENT
 export default function Login() {
   const { setSession } = useSession();
@@ -48,10 +53,16 @@ export default function Login() {
           >
             <Input
               label="username"
+              value={defaultUser.username}
               {...register("username")}
               autoComplete="on"
             />
-            <Input label="password" type="password" {...register("password")} />
+            <Input
+              label="password"
+              type="password"
+              value={defaultUser.password}
+              {...register("password")}
+            />
             <Button type="submit" className="w-full mt-4" disabled={isLoading}>
               {isLoading ? "Loading..." : "Login"}
             </Button>

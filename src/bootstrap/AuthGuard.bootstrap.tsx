@@ -1,6 +1,8 @@
 // #region IMPORTS
 import { useSession } from "@/context/Session.context";
 import { AppRouter } from "@/domains/Endpoints.domains";
+import { LoginResponse } from "@/domains/Types.domains";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 // #endregion IMPORTS
@@ -11,6 +13,28 @@ type AuthGuardBootstrapProps = {
   portal?: boolean;
 };
 // #endregion PROPS
+
+export const withAuthGuard = (
+  context: GetServerSidePropsContext,
+  fn: GetServerSideProps
+) => {
+  const { req } = context;
+  const cSession = req.cookies["_session"];
+  const session = cSession
+    ? (JSON.parse(cSession) as LoginResponse)
+    : undefined;
+
+  if (!session) {
+    return {
+      redirect: {
+        permanent: true,
+        destination: AppRouter.LOGIN,
+      },
+    };
+  }
+
+  return fn(context);
+};
 
 // #region MAIN COMPONENT
 export default function AuthGuardBootstrap({

@@ -15,39 +15,40 @@ import {
 } from "react-icons/ai";
 import QueryString from "qs";
 import { Pagination } from "@/components/molecules";
+import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
 // #endregion IMPORTS
 
-export const getServerSideProps: GetServerSideProps = async ({
-  res,
-  query,
-}) => {
-  const limit = query.l;
-  const skip = String((Number(query.p) - 1) * Number(limit));
-  const search = query.s ? `/search?q=${query.s}` : "";
-  const params = QueryString.stringify({ limit, skip });
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return withAuthGuard(context, async ({ res, query }) => {
+    const limit = query.l || 30;
+    const skip =
+      query.p && limit ? String((Number(query.p) - 1) * Number(limit)) : 0;
+    const search = query.s ? `/search?q=${query.s}` : "";
+    const params = QueryString.stringify({ limit, skip });
 
-  const { data } = await axios
-    .get(
-      `${Endpoints.GET_PRODUCTS}${
-        search ? `${search}&${params}` : `?${params}`
-      }`
-    )
-    .catch((e) => {
-      throw new Error("Cannot fetch products from server", { cause: e });
-    });
+    const { data } = await axios
+      .get(
+        `${Endpoints.GET_PRODUCTS}${
+          search ? `${search}&${params}` : `?${params}`
+        }`
+      )
+      .catch((e) => {
+        throw new Error("Cannot fetch products from server", { cause: e });
+      });
 
-  if (res) {
-    res.setHeader(
-      "Cache-Control",
-      "public, s-maxage=10, stale-while-revalidate=59"
-    );
-  }
+    if (res) {
+      res.setHeader(
+        "Cache-Control",
+        "public, s-maxage=10, stale-while-revalidate=59"
+      );
+    }
 
-  return {
-    props: {
-      products: data,
-    },
-  };
+    return {
+      props: {
+        products: data,
+      },
+    };
+  });
 };
 
 // #region PROPS
@@ -162,9 +163,9 @@ export default function Products({
           </div>
           <Table columns={columns} data={data} />
           <Pagination
-            total={productsResponse.total}
+            total={productsResponse.total ?? 0}
             page={Number(qPage)}
-            limit={Number(qLimit)}
+            limit={Number(qLimit ?? productsResponse.limit)}
             onPageChange={handlePageChange}
             onLimitChange={handleLimitChange}
           />

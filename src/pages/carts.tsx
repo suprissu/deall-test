@@ -1,7 +1,8 @@
 // #region IMPORTS
+import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
 import { Table } from "@/components/atoms";
 import { DashboardTemplate } from "@/components/templates";
-import { Endpoints } from "@/domains/Endpoints.domains";
+import { AppRouter, Endpoints } from "@/domains/Endpoints.domains";
 import { Cart, CartsResponse, LoginResponse } from "@/domains/Types.domains";
 import { ColumnDef } from "@tanstack/react-table";
 import axios from "axios";
@@ -9,30 +10,34 @@ import { GetServerSideProps } from "next";
 import React, { useEffect, useMemo } from "react";
 // #endregion IMPORTS
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const cSession = req.cookies["_session"];
-  const session = JSON.parse(cSession ?? "") as LoginResponse;
+// export const getServerSideProps: GetServerSideProps = async (context) =>
+//   withAuthGuard(context);
 
-  if (!session || !session.id) return { props: { carts: null } };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return withAuthGuard(context, async () => {
+    const { req, res } = context;
+    const cSession = req.cookies["_session"];
+    const session = JSON.parse(cSession ?? "{}") as LoginResponse;
 
-  const { data } = await axios
-    .get(Endpoints.GET_CARTS.replace(":id", String(session.id)))
-    .catch((e) => {
-      throw new Error("Cannot fetch carts from server", { cause: e });
-    });
+    const { data } = await axios
+      .get(Endpoints.GET_CARTS.replace(":id", String(session.id)))
+      .catch((e) => {
+        throw new Error("Cannot fetch carts from server", { cause: e });
+      });
 
-  if (res) {
-    res.setHeader(
-      "Cache-Control",
-      "public, s-maxage=10, stale-while-revalidate=59"
-    );
-  }
+    if (res) {
+      res.setHeader(
+        "Cache-Control",
+        "public, s-maxage=10, stale-while-revalidate=59"
+      );
+    }
 
-  return {
-    props: {
-      carts: data,
-    },
-  };
+    return {
+      props: {
+        carts: data,
+      },
+    };
+  });
 };
 
 // #region PROPS
