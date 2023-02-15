@@ -1,11 +1,11 @@
-import { SessionProvider } from "@/context";
+import ContextBootstrap from "@/bootstrap/Context.bootstrap";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider>
+    <ContextBootstrap>
       <Component {...pageProps} />
-    </SessionProvider>
+    </ContextBootstrap>
   );
 }
