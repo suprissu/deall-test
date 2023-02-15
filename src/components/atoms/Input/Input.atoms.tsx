@@ -10,13 +10,34 @@ type InputProps = React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
   HTMLInputElement
 > & {
-  label: string;
+  label?: string;
   sizes?: Size;
   description?: string;
   error?: string;
   touched?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+};
+
+type PasswordTypeButtonProps = {
+  isPasswordType: boolean;
+  onTypeChange: React.MouseEventHandler<HTMLButtonElement>;
 };
 // #endregion PROPS
+
+function PasswordTypeButton({
+  isPasswordType,
+  onTypeChange,
+}: PasswordTypeButtonProps) {
+  return (
+    <button
+      className="absolute z-10 top-1/2 -translate-y-1/2 right-2 p-2 rounded-md bg-info-100 hover:bg-info-200 text-info-400"
+      onClick={onTypeChange}
+    >
+      {isPasswordType ? <AiFillEyeInvisible /> : <AiFillEye />}
+    </button>
+  );
+}
 
 // #region MAIN COMPONENT
 const Input = (
@@ -32,6 +53,8 @@ const Input = (
     type,
     error,
     touched,
+    rightIcon,
+    leftIcon,
     ...props
   }: InputProps,
   ref: React.ForwardedRef<HTMLInputElement>
@@ -39,9 +62,9 @@ const Input = (
   const [isPasswordType, togglePasswordType] = useToggle(type === "password");
 
   const sizeInputStyleMap = useMemo(() => {
-    if (sizes === "narrow") return "px-3 py-2 text-sm";
+    if (sizes === "narrow") return "p-2 text-sm";
     else if (sizes === "tiny") return "px-2 py-1 text-xs";
-    return "p-3";
+    return "px-3 py-2";
   }, [sizes]);
 
   const sizeLabelStyleMap = useMemo(() => {
@@ -60,12 +83,14 @@ const Input = (
 
   return (
     <div className="flex flex-col gap-2">
-      <label
-        htmlFor={id}
-        className={`capitalize font-medium text-info-400 ${sizeLabelStyleMap}`}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          htmlFor={id}
+          className={`capitalize font-medium text-info-400 ${sizeLabelStyleMap}`}
+        >
+          {label}
+        </label>
+      )}
       <div className="relative">
         <input
           ref={ref}
@@ -79,19 +104,30 @@ const Input = (
         ${disabled ? "bg-info-50 text-marine-light" : "font-bold text-info-500"}
         ${value && "border-opacity-100"}
         ${sizeInputStyleMap}
+        ${leftIcon && "pl-10"}
+        ${rightIcon && "pr-10"}
         ${className}`}
           {...props}
         />
-        {type === "password" && (
-          <button
-            className="absolute z-10 top-1/2 -translate-y-1/2 right-2 p-2 rounded-md bg-info-100 hover:bg-info-200 text-info-400"
-            onClick={(e) => {
-              e.preventDefault();
-              togglePasswordType();
-            }}
-          >
-            {isPasswordType ? <AiFillEyeInvisible /> : <AiFillEye />}
-          </button>
+        {leftIcon && (
+          <div className="absolute z-10 top-1/2 -translate-y-1/2 left-2  p-1 text-info-400">
+            {leftIcon}
+          </div>
+        )}
+        {rightIcon ? (
+          <div className="absolute z-10 top-1/2 -translate-y-1/2 right-2  p-1 text-info-400">
+            {rightIcon}
+          </div>
+        ) : (
+          type === "password" && (
+            <PasswordTypeButton
+              isPasswordType={isPasswordType}
+              onTypeChange={(e) => {
+                e.preventDefault();
+                togglePasswordType();
+              }}
+            />
+          )
         )}
       </div>
       {description && <p className="text-info-400 font-light">{description}</p>}
