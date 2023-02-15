@@ -97,6 +97,7 @@ const Input = (
           id={id}
           name={id}
           type={typeMap}
+          value={value}
           placeholder={placeholder || `Fill your ${label} here...`}
           className={`peer placeholder:font-normal w-full rounded-md flex-row justify-start items-center inline-flex border border-info-200 hover:border-opacity-50
         outline-none focus:ring focus:ring-primary-400 focus:border-primary-400 focus:ring-opacity-10

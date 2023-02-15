@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     .catch((e) => {
       throw new Error("Cannot fetch carts from server", { cause: e });
     });
-  console.log(data);
+
   if (res) {
     res.setHeader(
       "Cache-Control",
