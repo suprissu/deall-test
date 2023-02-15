@@ -3,28 +3,44 @@
 
 // #region IMPORTS
 import { LoginResponse } from "@/domains/Types.domains";
-import React, { createContext, useContext } from "react";
-import { useLocalStorage } from "usehooks-ts";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 // #endregion IMPORTS
 
 const SessionContext = createContext<{
   session: LoginResponse | undefined;
-  setSession: React.Dispatch<React.SetStateAction<LoginResponse>>;
+  setSession: (data: LoginResponse) => void;
 }>({ session: undefined, setSession: () => undefined });
 
 export default function SessionProvider({ children }: React.PropsWithChildren) {
-  const [session, setSession] = useLocalStorage<LoginResponse | undefined>(
-    "_session",
-    undefined
-  );
+  const [session, setSession] = useState<LoginResponse | undefined>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const cookieSession = getCookie("_session") as string;
+    setSession(cookieSession ? JSON.parse(cookieSession ?? "") : undefined);
+    setLoading(false);
+  }, []);
+
+  const handleSession = useCallback((data: LoginResponse | undefined) => {
+    setSession(data);
+    if (data) setCookie("_session", data);
+    else deleteCookie("_session");
+  }, []);
+
+  if (loading) return null;
 
   return (
     <SessionContext.Provider
       value={{
         session,
-        setSession: setSession as React.Dispatch<
-          React.SetStateAction<LoginResponse>
-        >,
+        setSession: handleSession,
       }}
     >
       {children}

@@ -15,7 +15,7 @@ export default function Sidebar() {
     },
     {
       name: "Cart",
-      path: "/cart",
+      path: "/carts",
     },
   ];
 

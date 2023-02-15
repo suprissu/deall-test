@@ -34,3 +34,28 @@ export type ProductResponse = {
   skip: number;
   total: number;
 };
+
+export type Cart = {
+  id: number;
+  products: {
+    id: number;
+    title: string;
+    price: number;
+    quantity: number;
+    total: number;
+    discountPercentage: number;
+    discountedPrice: number;
+  }[];
+  total: number;
+  discountedTotal: number;
+  userId: number;
+  totalProducts: number;
+  totalQuantity: number;
+};
+
+export type CartsResponse = {
+  carts: Cart[];
+  total: number;
+  skip: number;
+  limit: number;
+};
