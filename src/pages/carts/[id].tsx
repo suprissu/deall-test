@@ -116,8 +116,6 @@ export default function CartDetail({
 }: CartDetailProps) {
   const router = useRouter();
 
-  console.log(cartDetailResponse);
-
   return (
     <DashboardTemplate title="Carts Detail">
       <div className="w-full h-full flex flex-col">

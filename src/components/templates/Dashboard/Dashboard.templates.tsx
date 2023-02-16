@@ -1,6 +1,6 @@
 // #region IMPORTS
 import { Sidebar } from "@/components/organisms";
-import { MainTemplate } from "@/components/templates";
+import { AnimationTemplate, MainTemplate } from "@/components/templates";
 import React from "react";
 // #endregion IMPORTS
 
@@ -21,8 +21,9 @@ export default function DashboardTemplate({
     <MainTemplate title={title} description={description} guard>
       <div className="flex">
         <Sidebar />
+
         <main className="p-4 flex-1 bg-info-100 h-screen overflow-auto">
-          {children}
+          <AnimationTemplate>{children}</AnimationTemplate>
         </main>
       </div>
     </MainTemplate>
