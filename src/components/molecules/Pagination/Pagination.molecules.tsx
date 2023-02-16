@@ -33,11 +33,13 @@ export default function Pagination({
         onChange={(data) => onLimitChange(data)}
       />
       <div className="flex gap-2">
-        {page > 1 && (
-          <Button variants="info" onClick={() => onPageChange(page - 1)}>
-            <AiOutlineArrowLeft />
-          </Button>
-        )}
+        <Button
+          variants="info"
+          disabled={page <= 1}
+          onClick={() => page > 1 && onPageChange(page - 1)}
+        >
+          <AiOutlineArrowLeft />
+        </Button>
         {new Array(totalPage).fill(null).map((_, index) => (
           <Button
             variants={page === index + 1 ? "primary" : "info"}
@@ -47,11 +49,13 @@ export default function Pagination({
             {index + 1}
           </Button>
         ))}
-        {page < totalPage && (
-          <Button variants="info" onClick={() => onPageChange(page + 1)}>
-            <AiOutlineArrowRight />
-          </Button>
-        )}
+        <Button
+          variants="info"
+          disabled={page >= totalPage}
+          onClick={() => page < totalPage && onPageChange(page + 1)}
+        >
+          <AiOutlineArrowRight />
+        </Button>
       </div>
     </div>
   );

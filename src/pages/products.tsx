@@ -68,13 +68,7 @@ export default function Products({
     () => productsResponse?.total ?? 0,
     [productsResponse]
   );
-  const limit = useMemo(
-    () =>
-      qLimit || (productsResponse && productsResponse.limit)
-        ? Number(qLimit ?? productsResponse.limit)
-        : 10,
-    [productsResponse, qLimit]
-  );
+  const limit = useMemo(() => (qLimit ? Number(qLimit) : 30), [qLimit]);
 
   const data: Product[] = useMemo(
     () => productsResponse?.products ?? [],
