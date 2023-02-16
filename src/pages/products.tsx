@@ -23,8 +23,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const limit = query.l || 30;
     const skip =
       query.p && limit ? String((Number(query.p) - 1) * Number(limit)) : 0;
-    const search = query.s ? `/search?q=${query.s}` : "";
-    const params = QueryString.stringify({ limit, skip });
+    const search: string = query.s ? `/search?q=${query.s}` : "";
+    const params: string = QueryString.stringify({ limit, skip });
 
     const { data } = await axios
       .get(
@@ -32,8 +32,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           search ? `${search}&${params}` : `?${params}`
         }`
       )
-      .catch((e) => {
-        throw new Error("Cannot fetch products from server", { cause: e });
+      .catch(() => {
+        return { data: null };
       });
 
     if (res) {
@@ -64,10 +64,21 @@ export default function Products({
   const router = useRouter();
   const { s: qSearch, p: qPage, l: qLimit } = router.query;
   const [searchText, setSearchText] = useState(qSearch ?? "");
+  const totalItems = useMemo(
+    () => productsResponse?.total ?? 0,
+    [productsResponse]
+  );
+  const limit = useMemo(
+    () =>
+      qLimit || (productsResponse && productsResponse.limit)
+        ? Number(qLimit ?? productsResponse.limit)
+        : 10,
+    [productsResponse, qLimit]
+  );
 
   const data: Product[] = useMemo(
-    () => productsResponse.products,
-    [productsResponse.products]
+    () => productsResponse?.products ?? [],
+    [productsResponse]
   );
   const columns: ColumnDef<Product>[] = useMemo(
     () => [
@@ -163,9 +174,9 @@ export default function Products({
           </div>
           <Table columns={columns} data={data} />
           <Pagination
-            total={productsResponse.total ?? 0}
+            total={totalItems}
             page={Number(qPage)}
-            limit={Number(qLimit ?? productsResponse.limit)}
+            limit={limit}
             onPageChange={handlePageChange}
             onLimitChange={handleLimitChange}
           />

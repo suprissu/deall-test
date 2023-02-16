@@ -12,4 +12,5 @@ export const AppRouter = {
   LOGIN: "/login",
   PRODUCTS: "/products",
   CARTS: "/carts",
+  CART_DETAIL: "/carts/:id",
 } as const;
