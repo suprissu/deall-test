@@ -67,21 +67,21 @@ function Cart({ cart }: CartProps) {
           accessor: "price",
           Header: "price",
           Cell(props: CellProps<ProductCartDetail>) {
-            return <>`$${props.value}`</>;
+            return <>{`$${props.value}`}</>;
           },
         },
         {
           accessor: "discountPercentage",
           Header: "discount",
           Cell(props: CellProps<ProductCartDetail>) {
-            return <>`${props.value}%`</>;
+            return <>{`${props.value}%`}</>;
           },
         },
         {
           accessor: "total",
           Header: "total",
           Cell(props: CellProps<ProductCartDetail>) {
-            return <>`$${props.value}`</>;
+            return <>{`$${props.value}`}</>;
           },
         },
       ] satisfies Column<ProductCartDetail>[],
