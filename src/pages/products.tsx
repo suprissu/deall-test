@@ -6,7 +6,7 @@ import { Product, ProductResponse } from "@/domains/Types.domains";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AiFillFilter,
   AiOutlineCloseCircle,
@@ -16,6 +16,8 @@ import QueryString from "qs";
 import { Pagination } from "@/components/molecules";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
 import { Column } from "react-table";
+import { AnimatePresence, motion } from "framer-motion";
+import Modal from "react-modal";
 // #endregion IMPORTS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -55,7 +57,148 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 type ProductsProps = {
   products: ProductResponse;
 };
+
+type FilterProps = {
+  products: ProductResponse;
+  onFilterChange: (data: {
+    products: string[];
+    brands: string[];
+    categories: string[];
+    price: {
+      min: number;
+      max: number;
+    };
+  }) => void;
+};
 // #endregion PROPS
+
+Modal.setAppElement("#__next");
+function Filter({ products, onFilterChange }: FilterProps) {
+  const [isFilterShow, setFilterShow] = useState(false);
+  const [filters, setFilters] = useState({
+    products: [],
+    brands: [],
+    categories: [],
+    price: {
+      min: 0,
+      max: 0,
+    },
+  });
+
+  useEffect(() => {
+    onFilterChange(filters);
+  }, [filters, onFilterChange]);
+
+  const productsOptions = useMemo(
+    () => [...new Set([...products.products.map((data) => data.title)])],
+    [products.products]
+  );
+
+  const brandsOptions = useMemo(
+    () => [...new Set([...products.products.map((data) => data.brand)])],
+    [products.products]
+  );
+
+  const categoriesOptions = useMemo(
+    () => [...new Set([...products.products.map((data) => data.category)])],
+    [products.products]
+  );
+
+  const filter = useMemo(
+    () => [
+      {
+        name: "products",
+        options: productsOptions,
+      },
+      {
+        name: "brands",
+        options: brandsOptions,
+      },
+      {
+        name: "categories",
+        options: categoriesOptions,
+      },
+    ],
+    [brandsOptions, categoriesOptions, productsOptions]
+  );
+
+  return (
+    <>
+      <Button
+        variants="info"
+        types="outline"
+        className="flex gap-2"
+        onClick={() => setFilterShow(true)}
+      >
+        <p>Filter</p>
+        <AiFillFilter />
+      </Button>
+      <Modal
+        isOpen={isFilterShow}
+        onAfterOpen={() => setFilterShow(true)}
+        onRequestClose={() => setFilterShow(false)}
+        contentLabel="Example Modal"
+      >
+        <header className="flex justify-between items-center">
+          <h3 className="text-xl mb-4 font-bold">Filter</h3>
+          <AiOutlineCloseCircle
+            className="w-6 h-6 text-info-400 cursor-pointer hover:text-primary-500"
+            onClick={() => setFilterShow(false)}
+          />
+        </header>
+        <div className="flex gap-8">
+          {filter.map((data, index) => (
+            <section key={index}>
+              <h4 className="capitalize text-info-500">{data.name}</h4>
+              <div className="grid grid-cols-2 gap-4 border-t pt-2 mt-2">
+                {data.options.map((opt) => {
+                  const id = opt.toLowerCase().replaceAll(" ", "-");
+
+                  return (
+                    <div className="flex items-center gap-2" key={id}>
+                      <input
+                        type="checkbox"
+                        id={id}
+                        name={id}
+                        className="cursor-pointer"
+                        onChange={() => {
+                          // TODO: ADD CHECKLIST TO FILTER
+                        }}
+                      />
+                      <label className="cursor-pointer" htmlFor={id}>
+                        {opt}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+          <section>
+            <h4 className="capitalize text-info-500">Price</h4>
+            <div className="flex items-center gap-2 border-t pt-2 mt-2">
+              <Input
+                placeholder="Min Price ($0)"
+                onChange={() => {
+                  // TODO: ADD TO FILTER
+                }}
+              />
+              {"-"}
+              <Input
+                placeholder={`Max Price ($${
+                  products.products.sort().reverse().pop()?.price
+                })`}
+                onChange={() => {
+                  // TODO: ADD TO FILTER
+                }}
+              />
+            </div>
+          </section>
+        </div>
+      </Modal>
+    </>
+  );
+}
 
 // #region MAIN COMPONENT
 export default function Products({
@@ -69,6 +212,11 @@ export default function Products({
     [productsResponse]
   );
   const limit = useMemo(() => (qLimit ? Number(qLimit) : 30), [qLimit]);
+
+  const [brandFilter, setBrandFilter] = useState("");
+  const [titleFilter, setTitleFilter] = useState("");
+  const [priceFilter, setPriceFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
 
   const data: Product[] = useMemo(
     () => productsResponse?.products ?? [],
@@ -144,10 +292,12 @@ export default function Products({
         <h1 className="text-xl font-bold m-4">Products</h1>
         <div className="flex-1 bg-white p-4 rounded-md w-full flex flex-col gap-4">
           <div className="flex items-center justify-end gap-4">
-            <Button variants="info" types="outline" className="flex gap-2">
-              <p>Filter</p>
-              <AiFillFilter />
-            </Button>
+            <Filter
+              products={productsResponse}
+              onFilterChange={(data) => {
+                // TODO: ADD TO FILTER STATE
+              }}
+            />
             <Input
               placeholder="Search..."
               onChange={(e) => setSearchText(e.target.value)}
@@ -172,7 +322,17 @@ export default function Products({
               }
             />
           </div>
-          <Table columns={columns} data={data} isLoading={false} />
+          <Table
+            columns={columns}
+            data={data}
+            isLoading={false}
+            filterColumns={[
+              { id: "brand", value: brandFilter },
+              { id: "title", value: titleFilter },
+              { id: "price", value: priceFilter },
+              { id: "category", value: categoryFilter },
+            ]}
+          />
           <Pagination
             total={totalItems}
             page={Number(qPage ?? 1)}
