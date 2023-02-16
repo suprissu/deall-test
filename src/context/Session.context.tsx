@@ -15,7 +15,7 @@ import React, {
 
 const SessionContext = createContext<{
   session: LoginResponse | undefined;
-  setSession: (data: LoginResponse) => void;
+  setSession: (data: LoginResponse | undefined) => void;
 }>({ session: undefined, setSession: () => undefined });
 
 export default function SessionProvider({ children }: React.PropsWithChildren) {
