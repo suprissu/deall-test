@@ -16,7 +16,6 @@ import QueryString from "qs";
 import { Pagination } from "@/components/molecules";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
 import { Column } from "react-table";
-import { AnimatePresence, motion } from "framer-motion";
 import Modal from "react-modal";
 // #endregion IMPORTS
 
@@ -72,6 +71,7 @@ type FilterProps = {
 };
 // #endregion PROPS
 
+// #region FILTER MODAL
 Modal.setAppElement("#__next");
 function Filter({ products, onFilterChange }: FilterProps) {
   const [isFilterShow, setFilterShow] = useState(false);
@@ -199,6 +199,7 @@ function Filter({ products, onFilterChange }: FilterProps) {
     </>
   );
 }
+// #endregion FILTER MODAL
 
 // #region MAIN COMPONENT
 export default function Products({
