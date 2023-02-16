@@ -33,8 +33,6 @@ export default function Login() {
           if (e.response?.status === 400) {
             alert("Username or Password is not correct. Please try again!");
           }
-        })
-        .finally(() => {
           setLoading(false);
         });
     },
