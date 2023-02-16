@@ -1,21 +1,15 @@
 // #region IMPORTS
 import { DashboardTemplate } from "@/components/templates";
-import {
-  Cart,
-  CartDetailResponse,
-  LoginResponse,
-  Product,
-} from "@/domains/Types.domains";
+import { Cart, CartDetailResponse } from "@/domains/Types.domains";
 import { useRouter } from "next/router";
-import { useToggle } from "usehooks-ts";
-import { BsChevronDown, BsChevronLeft, BsChevronUp } from "react-icons/bs";
+import { BsChevronLeft } from "react-icons/bs";
 import { Table } from "@/components/atoms";
 import { useMemo } from "react";
-import { ColumnDef } from "@tanstack/react-table";
 import { GetServerSideProps } from "next";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
 import { Endpoints } from "@/domains/Endpoints.domains";
 import axios from "axios";
+import { CellProps, Column } from "react-table";
 // #endregion IMPORTS
 
 // #region PROPS
@@ -25,6 +19,7 @@ type CartProps = {
 type CartDetailProps = {
   cartDetail: CartDetailResponse;
 };
+type ProductCartDetail = Cart["products"][number];
 // #endregion PROPS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -61,31 +56,35 @@ function Cart({ cart }: CartProps) {
     () =>
       [
         {
-          accessorKey: "title",
+          accessor: "title",
+          Header: "title",
         },
         {
-          accessorKey: "quantity",
+          accessor: "quantity",
+          Header: "quantity",
         },
         {
-          accessorKey: "price",
-          cell(props) {
-            return `$${props.cell.getValue()}`;
+          accessor: "price",
+          Header: "price",
+          Cell(props: CellProps<ProductCartDetail>) {
+            return <>`$${props.value}`</>;
           },
         },
         {
-          accessorKey: "discountPercentage",
-          header: "discount",
-          cell(props) {
-            return `${props.cell.getValue()}%`;
+          accessor: "discountPercentage",
+          Header: "discount",
+          Cell(props: CellProps<ProductCartDetail>) {
+            return <>`${props.value}%`</>;
           },
         },
         {
-          accessorKey: "total",
-          cell(props) {
-            return `$${props.cell.getValue()}`;
+          accessor: "total",
+          Header: "total",
+          Cell(props: CellProps<ProductCartDetail>) {
+            return <>`$${props.value}`</>;
           },
         },
-      ] satisfies ColumnDef<Cart["products"][number]>[],
+      ] satisfies Column<ProductCartDetail>[],
     []
   );
 
@@ -103,7 +102,7 @@ function Cart({ cart }: CartProps) {
         </div>
       </section>
       <div>
-        <Table columns={columns} data={cart.products} />
+        <Table columns={columns} data={cart.products} isLoading={false} />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import ContextBootstrap from "@/bootstrap/Context.bootstrap";
 import "@/styles/globals.css";
+import "@/styles/table.css";
 import { AnimatePresence } from "framer-motion";
 import type { AppProps } from "next/app";
 

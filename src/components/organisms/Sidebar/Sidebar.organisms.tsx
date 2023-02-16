@@ -48,7 +48,7 @@ export default function Sidebar() {
         ))}
       </div>
       <button
-        className="px-6 py-4 bg-error-400 hover:bg-error-500 flex gap-4 items-center"
+        className="px-6 py-4 bg-primary-600 hover:bg-primary-500 flex gap-4 items-center"
         onClick={handleSignOut}
       >
         <BiLogOut className="w-4 h-4" />

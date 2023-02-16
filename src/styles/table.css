@@ -1,0 +1,17 @@
+.table-container td[data-sticky-td] {
+  position: sticky;
+  z-index: 0 !important;
+  background-color: white;
+}
+
+.table-container th[data-sticky-td] {
+  z-index: 5 !important;
+}
+
+.table-container [data-sticky-last-left-td] {
+  box-shadow: 2px 0px 3px #ccc;
+}
+
+.table-container [data-sticky-first-right-td] {
+  box-shadow: -2px 0px 3px #ccc;
+}

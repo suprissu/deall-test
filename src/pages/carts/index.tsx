@@ -3,18 +3,17 @@ import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
 import { Button, Table } from "@/components/atoms";
 import { DashboardTemplate } from "@/components/templates";
 import { AppRouter, Endpoints } from "@/domains/Endpoints.domains";
-import { Cart, CartsResponse, LoginResponse } from "@/domains/Types.domains";
-import { ColumnDef } from "@tanstack/react-table";
+import { Cart, CartsResponse } from "@/domains/Types.domains";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
+import { CellProps, Column } from "react-table";
 // #endregion IMPORTS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return withAuthGuard(context, async () => {
-    const { req, res } = context;
-    const cSession = req.cookies["_session"];
+    const { res } = context;
 
     const { data } = await axios.get(Endpoints.GET_CARTS).catch(() => {
       return { data: null };
@@ -52,26 +51,32 @@ export default function Carts({ carts: cartsResponse }: CartsProps) {
     () =>
       [
         {
-          accessorKey: "id",
+          accessor: "id",
+          Header: "Id",
         },
         {
-          accessorKey: "userId",
+          accessor: "userId",
+          Header: "User Id",
         },
         {
-          accessorKey: "totalProducts",
+          accessor: "totalProducts",
+          Header: "Total Products",
         },
         {
-          accessorKey: "totalQuantity",
+          accessor: "totalQuantity",
+          Header: "Total Quantity",
         },
         {
-          accessorKey: "total",
-          cell(props) {
-            return `$${props.cell.getValue()}`;
+          accessor: "total",
+          Header: "Total Price",
+          Cell(props: CellProps<Cart>) {
+            return <>{`$${props.value}`}</>;
           },
         },
         {
-          header: "Action",
-          cell(props) {
+          accessor: "products",
+          Header: "Action",
+          Cell(props: CellProps<Cart>) {
             return (
               <Button
                 variants="info"
@@ -89,7 +94,7 @@ export default function Carts({ carts: cartsResponse }: CartsProps) {
             );
           },
         },
-      ] satisfies ColumnDef<Cart>[],
+      ] satisfies Column<Cart>[],
     [router]
   );
 
@@ -98,7 +103,7 @@ export default function Carts({ carts: cartsResponse }: CartsProps) {
       <div className="w-full h-full flex flex-col">
         <h1 className="text-xl font-bold m-4">Carts</h1>
         <div className="flex-1 bg-white p-4 rounded-md w-full flex flex-col">
-          <Table columns={columns} data={data} />
+          <Table columns={columns} data={data} isLoading={false} />
         </div>
       </div>
     </DashboardTemplate>

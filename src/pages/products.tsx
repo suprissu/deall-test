@@ -3,7 +3,6 @@ import { Button, Input, Table } from "@/components/atoms";
 import { DashboardTemplate } from "@/components/templates";
 import { AppRouter, Endpoints } from "@/domains/Endpoints.domains";
 import { Product, ProductResponse } from "@/domains/Types.domains";
-import { ColumnDef } from "@tanstack/react-table";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -16,6 +15,7 @@ import {
 import QueryString from "qs";
 import { Pagination } from "@/components/molecules";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
+import { Column } from "react-table";
 // #endregion IMPORTS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -74,24 +74,30 @@ export default function Products({
     () => productsResponse?.products ?? [],
     [productsResponse]
   );
-  const columns: ColumnDef<Product>[] = useMemo(
-    () => [
-      {
-        accessorKey: "title",
-      },
-      {
-        accessorKey: "brand",
-      },
-      {
-        accessorKey: "price",
-      },
-      {
-        accessorKey: "stock",
-      },
-      {
-        accessorKey: "category",
-      },
-    ],
+  const columns = useMemo(
+    () =>
+      [
+        {
+          accessor: "title",
+          Header: "title",
+        },
+        {
+          accessor: "brand",
+          Header: "brand",
+        },
+        {
+          accessor: "price",
+          Header: "price",
+        },
+        {
+          accessor: "stock",
+          Header: "stock",
+        },
+        {
+          accessor: "category",
+          Header: "category",
+        },
+      ] satisfies Column<Product>[],
     []
   );
 
@@ -166,7 +172,7 @@ export default function Products({
               }
             />
           </div>
-          <Table columns={columns} data={data} />
+          <Table columns={columns} data={data} isLoading={false} />
           <Pagination
             total={totalItems}
             page={Number(qPage ?? 1)}
