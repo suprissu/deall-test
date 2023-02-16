@@ -24,8 +24,8 @@ const trStyle = "even:bg-info-100";
 
 // #region PROPS
 type TableProps = {
-  columns: unknown;
-  data: unknown;
+  columns: unknown[];
+  data: unknown[];
 };
 // #endregion PROPS
 

@@ -11,20 +11,14 @@ import { useRouter } from "next/router";
 import React, { useEffect, useMemo } from "react";
 // #endregion IMPORTS
 
-// export const getServerSideProps: GetServerSideProps = async (context) =>
-//   withAuthGuard(context);
-
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return withAuthGuard(context, async () => {
     const { req, res } = context;
     const cSession = req.cookies["_session"];
-    const session = JSON.parse(cSession ?? "{}") as LoginResponse;
 
-    const { data } = await axios
-      .get(Endpoints.GET_CARTS.replace(":id", String(session.id)))
-      .catch(() => {
-        return { data: null };
-      });
+    const { data } = await axios.get(Endpoints.GET_CARTS).catch(() => {
+      return { data: null };
+    });
 
     if (res) {
       res.setHeader(
