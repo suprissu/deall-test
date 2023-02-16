@@ -5,7 +5,7 @@ const withBase = (path: string) => `${env.baseApiUrl}${path}`;
 export const Endpoints = {
   AUTH_LOGIN: withBase("/auth/login"),
   GET_PRODUCTS: withBase("/products"),
-  GET_CARTS: withBase("/carts/user/:id"),
+  GET_CARTS: withBase("/carts"),
 } as const;
 
 export const AppRouter = {

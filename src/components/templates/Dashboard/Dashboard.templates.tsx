@@ -21,7 +21,9 @@ export default function DashboardTemplate({
     <MainTemplate title={title} description={description} guard>
       <div className="flex">
         <Sidebar />
-        <main className="p-4 flex-1 bg-info-100">{children}</main>
+        <main className="p-4 flex-1 bg-info-100 h-screen overflow-auto">
+          {children}
+        </main>
       </div>
     </MainTemplate>
   );
