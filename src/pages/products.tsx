@@ -175,7 +175,7 @@ export default function Products({
           <Table columns={columns} data={data} />
           <Pagination
             total={totalItems}
-            page={Number(qPage)}
+            page={Number(qPage ?? 1)}
             limit={limit}
             onPageChange={handlePageChange}
             onLimitChange={handleLimitChange}
