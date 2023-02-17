@@ -84,6 +84,28 @@ const TableDashboard: React.FC<TableDashboardProps> = ({
       globalFilter,
       data: data as Record<string, unknown>[],
       columns: columns as Column<Record<string, unknown>>[],
+      filterTypes: {
+        multiple: (rows, columnIds, filterValue) => {
+          // Filter format must be {value1};{value2};{value3}
+
+          if (filterValue === "") return rows;
+          const filterValues = filterValue.split(";");
+          const filteredRows = rows.filter((row) =>
+            filterValues.includes(row.values[columnIds[0]])
+          );
+          return filteredRows;
+        },
+        range: (rows, columnIds, filterValue) => {
+          // Filter format must be {min}-{max}
+          console.log(rows, columnIds, filterValue);
+          const [min, max] = filterValue.split("-");
+          const filteredRows = rows.filter(
+            (row) =>
+              row.values[columnIds[0]] >= min && row.values[columnIds[0]] <= max
+          );
+          return filteredRows;
+        },
+      },
       sortTypes: {
         alphanumeric: (
           row1: Row<Record<string, unknown>>,

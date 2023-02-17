@@ -151,6 +151,7 @@ export default function Filter({ products, onFilterChange }: FilterProps) {
             <h4 className="capitalize text-info-500">Price</h4>
             <div className="flex items-center gap-2 border-t pt-2 mt-2">
               <Input
+                value={priceRange.min}
                 placeholder="Min Price ($0)"
                 onChange={(e) => {
                   setPriceRange((prev) => ({ ...prev, min: e.target.value }));
@@ -158,6 +159,7 @@ export default function Filter({ products, onFilterChange }: FilterProps) {
               />
               {"-"}
               <Input
+                value={priceRange.max}
                 placeholder={`Max Price ($${
                   products.products.sort().reverse().pop()?.price
                 })`}

@@ -11,7 +11,7 @@ import { AiOutlineCloseCircle, AiOutlineSearch } from "react-icons/ai";
 import QueryString from "qs";
 import { FilterModal, Pagination } from "@/components/molecules";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
-import { Column } from "react-table";
+import { CellProps, Column } from "react-table";
 // #endregion IMPORTS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -65,12 +65,16 @@ export default function Products({
     [productsResponse]
   );
   const limit = useMemo(() => (qLimit ? Number(qLimit) : 30), [qLimit]);
+  const defaultPriceRange = useMemo(
+    () => `0-${productsResponse.products.sort().reverse().pop()?.price}`,
+    [productsResponse.products]
+  );
 
   const [filters, setFilters] = useState({
     title: "",
     brand: "",
     category: "",
-    price: "0-0",
+    price: defaultPriceRange,
   });
 
   const data: Product[] = useMemo(
@@ -84,38 +88,19 @@ export default function Products({
         {
           accessor: "title",
           Header: "title",
-          filter(rows, columnIds, filterValue) {
-            if (filterValue === "") return rows;
-            const filterValues = filterValue.split(";");
-            const filteredRows = rows.filter((row) =>
-              filterValues.includes(row.values[columnIds[0]])
-            );
-            return filteredRows;
-          },
+          filter: "multiple",
         },
         {
           accessor: "brand",
           Header: "brand",
-          filter(rows, columnIds, filterValue) {
-            if (filterValue === "") return rows;
-            const filterValues = filterValue.split(";");
-            const filteredRows = rows.filter((row) =>
-              filterValues.includes(row.values[columnIds[0]])
-            );
-            return filteredRows;
-          },
+          filter: "multiple",
         },
         {
           accessor: "price",
           Header: "price",
-          filter(rows, columnIds, filterValue) {
-            const [min, max] = filterValue.split("-");
-            const filteredRows = rows.filter(
-              (row) =>
-                row.values[columnIds[0]] >= min &&
-                row.values[columnIds[0]] <= max
-            );
-            return rows;
+          filter: "range",
+          Cell(props: CellProps<Product>) {
+            return <>{`$${props.value}`}</>;
           },
         },
         {
@@ -125,14 +110,7 @@ export default function Products({
         {
           accessor: "category",
           Header: "category",
-          filter(rows, columnIds, filterValue) {
-            if (filterValue === "") return rows;
-            const filterValues = filterValue.split(";");
-            const filteredRows = rows.filter((row) =>
-              filterValues.includes(row.values[columnIds[0]])
-            );
-            return filteredRows;
-          },
+          filter: "multiple",
         },
       ] satisfies Column<Product>[],
     []
@@ -220,12 +198,12 @@ export default function Products({
             />
           </div>
           {filterColumns.some(
-            (data) => data.value !== "" && data.value !== "0-0"
+            (data) => data.value !== "" && data.value !== defaultPriceRange
           ) && (
             <p className="flex gap-2">
               Result for:
               {filterColumns?.map((data, index) => {
-                return data.value !== "" && data.value !== "0-0" ? (
+                return data.value !== "" && data.value !== defaultPriceRange ? (
                   <span key={index}>
                     <span className="capitalize mr-2 text-primary-500">
                       {data.id}
