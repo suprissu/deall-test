@@ -1,3 +1,4 @@
+import FilterModal from "./FilterModal";
 import Pagination from "./Pagination";
 
-export { Pagination };
+export { FilterModal, Pagination };
