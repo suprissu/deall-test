@@ -2,10 +2,11 @@
 import { useSession } from "@/context/Session.context";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { AiOutlineShoppingCart, AiTwotoneShop } from "react-icons/ai";
 import { BiLogOut } from "react-icons/bi";
-import { useScreen, useWindowSize } from "usehooks-ts";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { useScreen, useToggle, useWindowSize } from "usehooks-ts";
 // #endregion IMPORTS
 
 // #region MAIN COMPONENT
@@ -15,6 +16,7 @@ export default function Sidebar() {
   const { setSession } = useSession();
   const { width } = useWindowSize();
   const isTablet = width < 840;
+  const [isCollapse, toggleCollapse] = useToggle(false);
 
   const sidebarList = [
     {
@@ -66,21 +68,32 @@ export default function Sidebar() {
     );
 
   return (
-    <nav className="bg-primary-700 text-white font-semibold w-64 h-screen flex flex-col">
-      <div className="py-6 flex items-center justify-center cursor-pointer bg-primary-800 hover:bg-primary-900">
-        <Link href="/">LOGO</Link>
+    <nav
+      className={`bg-primary-700 text-white font-semibold h-screen flex flex-col ${
+        isCollapse ? "w-20" : "w-64"
+      }`}
+    >
+      <div className="flex items-center justify-center cursor-pointer">
+        {!isCollapse && (
+          <Link href="/" className="flex-1 p-6 hover:bg-primary-800">
+            LOGO
+          </Link>
+        )}
+        <button onClick={toggleCollapse}>
+          <RxHamburgerMenu className="w-16 h-16 py-4 px-6" />
+        </button>
       </div>
-      <div className="flex-1 flex flex-col p-4">
+      <div className={`flex-1 flex flex-col ${!isCollapse && "p-4"}`}>
         {sidebarList.map((data, index) => (
           <Link key={index} href={data.path} passHref>
             <div
               className={`w-full text-left px-6 py-4 border-l-4 hover:bg-primary-600 ${
                 pathname === data.path
-                  ? "border-secondary-200"
-                  : "border-transparent"
+                  ? "border-secondary-200 text-white"
+                  : "border-transparent text-info-200"
               }`}
             >
-              {data.name}
+              {isCollapse ? data.icon : data.name}
             </div>
           </Link>
         ))}
@@ -89,8 +102,8 @@ export default function Sidebar() {
         className="px-6 py-4 bg-primary-600 hover:bg-primary-500 flex gap-4 items-center"
         onClick={handleSignOut}
       >
-        <BiLogOut className="w-4 h-4" />
-        <p>Sign Out</p>
+        <BiLogOut className="w-6 h-6" />
+        {!isCollapse && <p>Sign Out</p>}
       </button>
     </nav>
   );
