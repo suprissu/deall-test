@@ -11,7 +11,7 @@ import { Table } from "@/components/atoms";
 import { useMemo } from "react";
 import { GetServerSideProps } from "next";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
-import { Endpoints } from "@/domains/Endpoints.domains";
+import { AppRouter, Endpoints } from "@/domains/Endpoints.domains";
 import axios from "axios";
 import { CellProps, Column } from "react-table";
 // #endregion IMPORTS
@@ -145,7 +145,7 @@ export default function CartDetail({
   const router = useRouter();
 
   return (
-    <DashboardTemplate title="Carts Detail">
+    <DashboardTemplate title={AppRouter.CART_DETAIL.name}>
       <div className="w-full h-full flex flex-col">
         <button className="flex items-center gap-1" onClick={router.back}>
           <BsChevronLeft />

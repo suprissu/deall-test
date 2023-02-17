@@ -11,9 +11,9 @@ export const Endpoints = {
 } as const;
 
 export const AppRouter = {
-  HOME: "/",
-  LOGIN: "/login",
-  PRODUCTS: "/products",
-  CARTS: "/carts",
-  CART_DETAIL: "/carts/:id",
+  HOME: { name: "Home", path: "/" },
+  LOGIN: { name: "Login", path: "/login" },
+  PRODUCTS: { name: "Products", path: "/products" },
+  CARTS: { name: "Carts", path: "/carts" },
+  CART_DETAIL: { name: "Cart Detail", path: "/carts/:id" },
 } as const;

@@ -1,35 +1,33 @@
 // #region IMPORTS
+import Menu from "@/config/Menu";
 import { useSession } from "@/context/Session.context";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
-import { AiOutlineShoppingCart, AiTwotoneShop } from "react-icons/ai";
+import { useCallback, useMemo } from "react";
 import { BiLogOut } from "react-icons/bi";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { useScreen, useToggle, useWindowSize } from "usehooks-ts";
+import { useToggle, useWindowSize } from "usehooks-ts";
+import RoleCode from "@/data/RoleCode.data";
+import { Role } from "@/domains/Types.domains";
 // #endregion IMPORTS
+
+// #region PROPS
+const sidebarList = Object.values(Menu.sidebar);
+// #endregion PROPS
 
 // #region MAIN COMPONENT
 export default function Sidebar() {
   const router = useRouter();
   const { pathname } = router;
-  const { setSession } = useSession();
+  const { session, setSession } = useSession();
   const { width } = useWindowSize();
   const isTablet = width < 840;
   const [isCollapse, toggleCollapse] = useToggle(false);
 
-  const sidebarList = [
-    {
-      name: "Products",
-      path: "/products",
-      icon: <AiTwotoneShop className="w-6 h-6" />,
-    },
-    {
-      name: "Cart",
-      path: "/carts",
-      icon: <AiOutlineShoppingCart className="w-6 h-6" />,
-    },
-  ];
+  const userRoleCode = useMemo(
+    () => (session ? RoleCode[session?.username] : Role.GUEST),
+    [session]
+  );
 
   const handleSignOut = useCallback(() => {
     setSession(undefined);
@@ -84,19 +82,21 @@ export default function Sidebar() {
         </button>
       </div>
       <div className={`flex-1 flex flex-col ${!isCollapse && "p-4"}`}>
-        {sidebarList.map((data, index) => (
-          <Link key={index} href={data.path} passHref>
-            <div
-              className={`w-full text-left px-6 py-4 border-l-4 hover:bg-primary-600 ${
-                pathname === data.path
-                  ? "border-secondary-200 text-white"
-                  : "border-transparent text-info-200"
-              }`}
-            >
-              {isCollapse ? data.icon : data.name}
-            </div>
-          </Link>
-        ))}
+        {sidebarList.map((data, index) =>
+          data.access.has(userRoleCode) ? (
+            <Link key={index} href={data.path} passHref>
+              <div
+                className={`w-full text-left px-6 py-4 border-l-4 hover:bg-primary-600 ${
+                  pathname === data.path
+                    ? "border-secondary-200 text-white"
+                    : "border-transparent text-info-200"
+                }`}
+              >
+                {isCollapse ? data.icon : data.name}
+              </div>
+            </Link>
+          ) : null
+        )}
       </div>
       <button
         className="px-6 py-4 bg-primary-600 hover:bg-primary-500 flex gap-4 items-center"

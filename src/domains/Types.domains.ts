@@ -1,3 +1,9 @@
+export enum Role {
+  ADMIN = "ADMIN",
+  CLIENT = "ADMIN",
+  GUEST = "GUEST",
+}
+
 export type LoginParams = {
   username: string;
   password: string;

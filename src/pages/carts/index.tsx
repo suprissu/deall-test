@@ -82,7 +82,7 @@ export default function Carts({ carts: cartsResponse }: CartsProps) {
                 variants="info"
                 onClick={() =>
                   router.push(
-                    AppRouter.CART_DETAIL.replace(
+                    AppRouter.CART_DETAIL.path.replace(
                       ":id",
                       String(props.row.original.id)
                     )
@@ -99,9 +99,9 @@ export default function Carts({ carts: cartsResponse }: CartsProps) {
   );
 
   return (
-    <DashboardTemplate title="Carts">
+    <DashboardTemplate title={AppRouter.CARTS.name}>
       <div className="w-full h-full flex flex-col">
-        <h1 className="text-xl font-bold m-4">Carts</h1>
+        <h1 className="text-xl font-bold m-4">{AppRouter.CARTS.name}</h1>
         <div className="flex-1 bg-white p-4 rounded-md w-full flex flex-col">
           <Table columns={columns} data={data} isLoading={false} />
         </div>

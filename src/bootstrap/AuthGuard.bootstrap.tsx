@@ -1,10 +1,12 @@
 // #region IMPORTS
+import Menu from "@/config/Menu";
 import { useSession } from "@/context/Session.context";
+import RoleCode from "@/data/RoleCode.data";
 import { AppRouter } from "@/domains/Endpoints.domains";
-import { LoginResponse } from "@/domains/Types.domains";
+import { LoginResponse, Role } from "@/domains/Types.domains";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 // #endregion IMPORTS
 
 // #region PROPS
@@ -28,7 +30,7 @@ export const withAuthGuard = (
     return {
       redirect: {
         permanent: true,
-        destination: AppRouter.LOGIN,
+        destination: AppRouter.LOGIN.path,
       },
     };
   }
@@ -45,14 +47,25 @@ export default function AuthGuardBootstrap({
   const { session } = useSession();
   const router = useRouter();
   const isAuthenticated = Boolean(session?.token);
+  const userRoleCode = useMemo(
+    () => (session ? RoleCode[session?.username] : Role.GUEST),
+    [session]
+  );
 
   useEffect(() => {
-    if ((portal || router.pathname === AppRouter.HOME) && isAuthenticated)
-      router.push(AppRouter.PRODUCTS);
-    else if (guard && !isAuthenticated) {
-      router.push(AppRouter.LOGIN);
+    if (
+      (portal || router.pathname === AppRouter.HOME.path) &&
+      isAuthenticated
+    ) {
+      const path = Object.entries(Menu.sidebar).find((data) =>
+        data[1].access.has(userRoleCode)
+      )?.[0];
+      console.log(path);
+      router.push(path ?? AppRouter.PRODUCTS.path);
+    } else if (guard && !isAuthenticated) {
+      router.push(AppRouter.LOGIN.path);
     }
-  }, [guard, isAuthenticated, portal, router]);
+  }, [guard, isAuthenticated, portal, router, userRoleCode]);
 
   if (guard && !isAuthenticated) return null;
 

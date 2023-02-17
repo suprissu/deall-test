@@ -124,7 +124,7 @@ export default function Products({
         l: qLimit,
         p: 1,
       });
-      router.push(`${AppRouter.PRODUCTS}${params ? "?" + params : ""}`);
+      router.push(`${AppRouter.PRODUCTS.path}${params ? "?" + params : ""}`);
     },
     [qLimit, router, searchText]
   );
@@ -136,7 +136,7 @@ export default function Products({
         p: page,
         l: qLimit,
       });
-      router.push(`${AppRouter.PRODUCTS}${params ? "?" + params : ""}`);
+      router.push(`${AppRouter.PRODUCTS.path}${params ? "?" + params : ""}`);
     },
     [qLimit, router, searchText]
   );
@@ -148,7 +148,7 @@ export default function Products({
         p: 1,
         l: limit,
       });
-      router.push(`${AppRouter.PRODUCTS}${params ? "?" + params : ""}`);
+      router.push(`${AppRouter.PRODUCTS.path}${params ? "?" + params : ""}`);
     },
     [router, searchText]
   );
@@ -164,9 +164,9 @@ export default function Products({
   );
 
   return (
-    <DashboardTemplate title="Products">
+    <DashboardTemplate title={AppRouter.PRODUCTS.name}>
       <div className="w-full h-full flex flex-col">
-        <h1 className="text-xl font-bold m-4">Products</h1>
+        <h1 className="text-xl font-bold m-4">{AppRouter.PRODUCTS.name}</h1>
         <div className="flex-1 bg-white p-4 rounded-md w-full flex flex-col gap-4">
           <div className="flex items-center justify-end gap-4">
             <FilterModal
