@@ -37,7 +37,7 @@ export default function Sidebar() {
 
   if (isTablet)
     return (
-      <nav className="fixed bottom-2 left-1/2 -translate-x-1/2 w-5/6 z-index-[2] bg-white rounded-xl shadow-xl flex items-center justify-evenly">
+      <nav className="fixed bottom-2 left-1/2 -translate-x-1/2 w-5/6 z-[2] bg-white rounded-xl shadow-xl flex items-center justify-evenly">
         {sidebarList.map((data, index) => (
           <Link
             className="flex-1 flex items-center justify-center"
