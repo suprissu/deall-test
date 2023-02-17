@@ -14,7 +14,7 @@ export default function Sidebar() {
   const { pathname } = router;
   const { setSession } = useSession();
   const { width } = useWindowSize();
-  const isMobile = width < 768;
+  const isTablet = width < 840;
 
   const sidebarList = [
     {
@@ -33,7 +33,7 @@ export default function Sidebar() {
     setSession(undefined);
   }, [setSession]);
 
-  if (isMobile)
+  if (isTablet)
     return (
       <nav className="fixed bottom-2 left-1/2 -translate-x-1/2 w-5/6 z-index-[2] bg-white rounded-xl shadow-xl flex items-center justify-evenly">
         {sidebarList.map((data, index) => (
