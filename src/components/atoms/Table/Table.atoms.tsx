@@ -20,7 +20,7 @@ const tableWrapperStyle = `w-full h-96 flex-grow border-collapse border border-i
 const tableStyle = `w-full relative z-0`;
 const tHeadStyle = `sticky -top-[1px] z-index[1] bg-info-200 m-0`;
 const tableHeaderStyle = `sticky top-0 z-index[4] px-4 py-2 capitalize text-left hover:bg-info-300`;
-const tableHeaderItemContainerStyle = `flex items-center h-5 gap-1 font-size[15px] text-oxford-blue font-normal`;
+const tableHeaderItemContainerStyle = `flex items-center gap-1 font-medium`;
 const tableRowStyle = `w-full even:bg-info-100 transition duration-500 hover:bg-primary-100`;
 const tableDataStyle = `border-gray-100 p-4 w-96 h-5 border-b`;
 const emptyTableIconContainerStyle = `flex flex-col align-middle text-center mt-28`;
@@ -203,20 +203,16 @@ const TableDashboard: React.FC<TableDashboardProps> = ({
                   {...restHeaderProps}
                 >
                   <div className={tableHeaderItemContainerStyle}>
-                    <p className="text-cc-slate-400">
-                      {column.render("Header")}
-                    </p>
-                    <span>
-                      {column.isSorted ? (
-                        column.isSortedDesc ? (
-                          <BiChevronUp className="w-4 h-4 stroke-0 text-cc-slate-400" />
-                        ) : (
-                          <BiChevronDown className="w-4 h-4 stroke-0 text-cc-slate-400" />
-                        )
+                    {column.render("Header")}
+                    {column.isSorted ? (
+                      column.isSortedDesc ? (
+                        <BiChevronUp className="w-4 h-4 stroke-0 text-cc-slate-400" />
                       ) : (
-                        ""
-                      )}{" "}
-                    </span>
+                        <BiChevronDown className="w-4 h-4 stroke-0 text-cc-slate-400" />
+                      )
+                    ) : (
+                      ""
+                    )}{" "}
                   </div>
                 </th>
               );

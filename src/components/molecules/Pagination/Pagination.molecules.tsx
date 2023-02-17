@@ -26,8 +26,9 @@ export default function Pagination({
   const totalPage = useMemo(() => Math.ceil(total / limit), [limit, total]);
 
   return (
-    <div className="flex gap-6">
+    <div className="flex gap-6 mobile:flex-col mobile: items-center">
       <Select
+        label="Limit Items: "
         value={limit.toString()}
         options={limitOptions}
         onChange={(data) => onLimitChange(data)}
