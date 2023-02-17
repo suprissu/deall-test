@@ -48,15 +48,18 @@ export default function Login() {
       <main className="w-full h-screen bg-info-100 flex items-center justify-center">
         <div className="bg-white w-96 p-4">
           <p className="text-info-400 text-sm text-center">
-            you can use any account from this api:{" "}
+            you can use any account from user json in data folder or this api:{" "}
             <a
               href="https://dummyjson.com/users"
               target="_blank"
               rel="noreferrer"
               className="text-black hover:text-primary-500"
             >
-              https://dummyjson.com/users
+              https://dummyjson.com/users.
             </a>
+          </p>
+          <p className="text-warning-600 text-sm text-center">
+            Check role code in data folder!
           </p>
           <form
             className="flex flex-col gap-2 mt-4"
