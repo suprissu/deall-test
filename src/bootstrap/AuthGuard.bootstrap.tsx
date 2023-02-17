@@ -47,7 +47,8 @@ export default function AuthGuardBootstrap({
   const isAuthenticated = Boolean(session?.token);
 
   useEffect(() => {
-    if (portal && isAuthenticated) router.push(AppRouter.PRODUCTS);
+    if ((portal || router.pathname === AppRouter.HOME) && isAuthenticated)
+      router.push(AppRouter.PRODUCTS);
     else if (guard && !isAuthenticated) {
       router.push(AppRouter.LOGIN);
     }

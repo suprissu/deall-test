@@ -10,6 +10,7 @@ export const Endpoints = {
 } as const;
 
 export const AppRouter = {
+  HOME: "/",
   LOGIN: "/login",
   PRODUCTS: "/products",
   CARTS: "/carts",
