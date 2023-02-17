@@ -242,12 +242,14 @@ const TableDashboard: React.FC<TableDashboardProps> = ({
       )}
       <div>
         <React.Fragment>
-          {!isLoading && (data as Record<string, unknown>[]).length === 0 && (
+          {!isLoading && rows.length === 0 && (
             <div className={emptyTableIconContainerStyle}>
               {emptyIcon ?? <ImFileEmpty className="self-center" />}
               <p className={emptyTableTextStyle}>
                 No {title ?? "data"}{" "}
-                {rows.length === 0 ? "found" : "has been added"}
+                {(data as Record<string, unknown>[]).length === 0
+                  ? "has been added"
+                  : "found"}
               </p>
               {extraEmptyComponent}
             </div>

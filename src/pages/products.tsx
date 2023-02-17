@@ -15,7 +15,7 @@ import {
 import QueryString from "qs";
 import { Pagination } from "@/components/molecules";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
-import { Column } from "react-table";
+import { Column, Row } from "react-table";
 import Modal from "react-modal";
 // #endregion IMPORTS
 
@@ -60,13 +60,10 @@ type ProductsProps = {
 type FilterProps = {
   products: ProductResponse;
   onFilterChange: (data: {
-    products: string[];
-    brands: string[];
-    categories: string[];
-    price: {
-      min: number;
-      max: number;
-    };
+    title: string;
+    brand: string;
+    category: string;
+    price: string;
   }) => void;
 };
 // #endregion PROPS
@@ -75,19 +72,12 @@ type FilterProps = {
 Modal.setAppElement("#__next");
 function Filter({ products, onFilterChange }: FilterProps) {
   const [isFilterShow, setFilterShow] = useState(false);
-  const [filters, setFilters] = useState({
-    products: [],
-    brands: [],
-    categories: [],
-    price: {
-      min: 0,
-      max: 0,
-    },
+  const [filters, setFilters] = useState<Record<string, string[]>>({
+    title: [],
+    brand: [],
+    category: [],
   });
-
-  useEffect(() => {
-    onFilterChange(filters);
-  }, [filters, onFilterChange]);
+  const [priceRange, setPriceRange] = useState({ min: "0", max: "0" });
 
   const productsOptions = useMemo(
     () => [...new Set([...products.products.map((data) => data.title)])],
@@ -107,20 +97,54 @@ function Filter({ products, onFilterChange }: FilterProps) {
   const filter = useMemo(
     () => [
       {
-        name: "products",
+        name: "title",
         options: productsOptions,
       },
       {
-        name: "brands",
+        name: "brand",
         options: brandsOptions,
       },
       {
-        name: "categories",
+        name: "category",
         options: categoriesOptions,
       },
     ],
     [brandsOptions, categoriesOptions, productsOptions]
   );
+
+  const handleRemoveFilter = useCallback(
+    (sectionName: string, data: string) => {
+      setFilters((prev) => ({
+        ...prev,
+        [sectionName]: prev[sectionName].filter((flt) => flt !== data),
+      }));
+    },
+    []
+  );
+
+  const handleAddFilter = useCallback((sectionName: string, data: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [sectionName]: [...prev[sectionName], data],
+    }));
+  }, []);
+
+  const handleApplyFilter = useCallback(() => {
+    onFilterChange({
+      title: filters.title.join(";"),
+      brand: filters.brand.join(";"),
+      category: filters.category.join(";"),
+      price: `${priceRange.min}-${priceRange.max}`,
+    });
+    setFilterShow(false);
+  }, [
+    filters.brand,
+    filters.category,
+    filters.title,
+    onFilterChange,
+    priceRange.max,
+    priceRange.min,
+  ]);
 
   return (
     <>
@@ -137,7 +161,6 @@ function Filter({ products, onFilterChange }: FilterProps) {
         isOpen={isFilterShow}
         onAfterOpen={() => setFilterShow(true)}
         onRequestClose={() => setFilterShow(false)}
-        contentLabel="Example Modal"
       >
         <header className="flex justify-between items-center">
           <h3 className="text-xl mb-4 font-bold">Filter</h3>
@@ -146,7 +169,7 @@ function Filter({ products, onFilterChange }: FilterProps) {
             onClick={() => setFilterShow(false)}
           />
         </header>
-        <div className="flex gap-8">
+        <div className="flex flex-col gap-8">
           {filter.map((data, index) => (
             <section key={index}>
               <h4 className="capitalize text-info-500">{data.name}</h4>
@@ -161,9 +184,12 @@ function Filter({ products, onFilterChange }: FilterProps) {
                         id={id}
                         name={id}
                         className="cursor-pointer"
-                        onChange={() => {
-                          // TODO: ADD CHECKLIST TO FILTER
-                        }}
+                        checked={filters[data.name].includes(opt)}
+                        onChange={(e) =>
+                          e.target.checked
+                            ? handleAddFilter(data.name, opt)
+                            : handleRemoveFilter(data.name, opt)
+                        }
                       />
                       <label className="cursor-pointer" htmlFor={id}>
                         {opt}
@@ -179,8 +205,8 @@ function Filter({ products, onFilterChange }: FilterProps) {
             <div className="flex items-center gap-2 border-t pt-2 mt-2">
               <Input
                 placeholder="Min Price ($0)"
-                onChange={() => {
-                  // TODO: ADD TO FILTER
+                onChange={(e) => {
+                  setPriceRange((prev) => ({ ...prev, min: e.target.value }));
                 }}
               />
               {"-"}
@@ -188,12 +214,17 @@ function Filter({ products, onFilterChange }: FilterProps) {
                 placeholder={`Max Price ($${
                   products.products.sort().reverse().pop()?.price
                 })`}
-                onChange={() => {
-                  // TODO: ADD TO FILTER
+                onChange={(e) => {
+                  setPriceRange((prev) => ({ ...prev, max: e.target.value }));
                 }}
               />
             </div>
           </section>
+          <div className="flex items-center justify-end border-t pt-2 mt-2">
+            <Button variants="success" onClick={handleApplyFilter}>
+              Apply Filter
+            </Button>
+          </div>
         </div>
       </Modal>
     </>
@@ -214,29 +245,57 @@ export default function Products({
   );
   const limit = useMemo(() => (qLimit ? Number(qLimit) : 30), [qLimit]);
 
-  const [brandFilter, setBrandFilter] = useState("");
-  const [titleFilter, setTitleFilter] = useState("");
-  const [priceFilter, setPriceFilter] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
+  const [filters, setFilters] = useState({
+    title: "",
+    brand: "",
+    category: "",
+    price: "0-0",
+  });
 
   const data: Product[] = useMemo(
     () => productsResponse?.products ?? [],
     [productsResponse]
   );
+
   const columns = useMemo(
     () =>
       [
         {
           accessor: "title",
           Header: "title",
+          filter(rows, columnIds, filterValue) {
+            if (filterValue === "") return rows;
+            const filterValues = filterValue.split(";");
+            const filteredRows = rows.filter((row) =>
+              filterValues.includes(row.values[columnIds[0]])
+            );
+            return filteredRows;
+          },
         },
         {
           accessor: "brand",
           Header: "brand",
+          filter(rows, columnIds, filterValue) {
+            if (filterValue === "") return rows;
+            const filterValues = filterValue.split(";");
+            const filteredRows = rows.filter((row) =>
+              filterValues.includes(row.values[columnIds[0]])
+            );
+            return filteredRows;
+          },
         },
         {
           accessor: "price",
           Header: "price",
+          filter(rows, columnIds, filterValue) {
+            const [min, max] = filterValue.split("-");
+            const filteredRows = rows.filter(
+              (row) =>
+                row.values[columnIds[0]] >= min &&
+                row.values[columnIds[0]] <= max
+            );
+            return rows;
+          },
         },
         {
           accessor: "stock",
@@ -245,6 +304,14 @@ export default function Products({
         {
           accessor: "category",
           Header: "category",
+          filter(rows, columnIds, filterValue) {
+            if (filterValue === "") return rows;
+            const filterValues = filterValue.split(";");
+            const filteredRows = rows.filter((row) =>
+              filterValues.includes(row.values[columnIds[0]])
+            );
+            return filteredRows;
+          },
         },
       ] satisfies Column<Product>[],
     []
@@ -287,6 +354,16 @@ export default function Products({
     [router, searchText]
   );
 
+  const filterColumns = useMemo(
+    () => [
+      { id: "brand", value: filters.brand },
+      { id: "title", value: filters.title },
+      { id: "price", value: filters.price },
+      { id: "category", value: filters.category },
+    ],
+    [filters.brand, filters.category, filters.price, filters.title]
+  );
+
   return (
     <DashboardTemplate title="Products">
       <div className="w-full h-full flex flex-col">
@@ -295,9 +372,7 @@ export default function Products({
           <div className="flex items-center justify-end gap-4">
             <Filter
               products={productsResponse}
-              onFilterChange={(data) => {
-                // TODO: ADD TO FILTER STATE
-              }}
+              onFilterChange={(data) => setFilters(data)}
             />
             <Input
               placeholder="Search..."
@@ -323,16 +398,37 @@ export default function Products({
               }
             />
           </div>
+          {filterColumns.some(
+            (data) => data.value !== "" && data.value !== "0-0"
+          ) && (
+            <p className="flex gap-2">
+              Result for:
+              {filterColumns?.map((data, index) => {
+                return data.value !== "" && data.value !== "0-0" ? (
+                  <span key={index}>
+                    <span className="capitalize mr-2 text-primary-500">
+                      {data.id}
+                    </span>
+                    <span className="font-medium">
+                      {"'"}
+                      {data.id !== "price"
+                        ? data.value.replaceAll(";", ", ")
+                        : data.value
+                            .split("-")
+                            .map((num) => `$${num}`)
+                            .join(" - ")}
+                      {"'"}
+                    </span>
+                  </span>
+                ) : null;
+              })}
+            </p>
+          )}
           <Table
             columns={columns}
             data={data}
             isLoading={false}
-            filterColumns={[
-              { id: "brand", value: brandFilter },
-              { id: "title", value: titleFilter },
-              { id: "price", value: priceFilter },
-              { id: "category", value: categoryFilter },
-            ]}
+            filterColumns={filterColumns}
           />
           <Pagination
             total={totalItems}
