@@ -39,7 +39,9 @@ export default function Login() {
     [setSession]
   );
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm({
+    defaultValues: defaultUser,
+  });
 
   return (
     <MainTemplate title="Login" portal>
@@ -62,16 +64,10 @@ export default function Login() {
           >
             <Input
               label="username"
-              value={defaultUser.username}
               {...register("username")}
               autoComplete="on"
             />
-            <Input
-              label="password"
-              type="password"
-              value={defaultUser.password}
-              {...register("password")}
-            />
+            <Input label="password" type="password" {...register("password")} />
             <Button type="submit" className="w-full mt-4" disabled={isLoading}>
               {isLoading ? "Loading..." : "Login"}
             </Button>

@@ -60,7 +60,6 @@ export default function AuthGuardBootstrap({
       const path = Object.entries(Menu.sidebar).find((data) =>
         data[1].access.has(userRoleCode)
       )?.[0];
-      console.log(path);
       router.push(path ?? AppRouter.PRODUCTS.path);
     } else if (guard && !isAuthenticated) {
       router.push(AppRouter.LOGIN.path);

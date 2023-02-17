@@ -36,23 +36,25 @@ export default function Sidebar() {
   if (isTablet)
     return (
       <nav className="fixed bottom-2 left-1/2 -translate-x-1/2 w-5/6 z-[2] bg-white rounded-xl shadow-xl flex items-center justify-evenly">
-        {sidebarList.map((data, index) => (
-          <Link
-            className="flex-1 flex items-center justify-center"
-            key={index}
-            href={data.path}
-            passHref
-          >
-            <div
-              className={`py-4 flex flex-col items-center gap-2 ${
-                pathname === data.path && "text-primary-500"
-              }`}
+        {sidebarList.map((data, index) =>
+          data.access.has(userRoleCode) ? (
+            <Link
+              className="flex-1 flex items-center justify-center"
+              key={index}
+              href={data.path}
+              passHref
             >
-              {data.icon}
-              <p className="text-xs">{data.name}</p>
-            </div>
-          </Link>
-        ))}
+              <div
+                className={`py-4 flex flex-col items-center gap-2 ${
+                  pathname === data.path && "text-primary-500"
+                }`}
+              >
+                {data.icon}
+                <p className="text-xs">{data.name}</p>
+              </div>
+            </Link>
+          ) : null
+        )}
         <button
           className="flex-1 flex items-center justify-center"
           onClick={handleSignOut}

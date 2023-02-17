@@ -21,7 +21,7 @@ export type SidebarMenuProps = {
 
 const access: Record<string, Set<Role>> = {
   [AppRouter.HOME.path]: new Set([Role.ADMIN, Role.CLIENT]),
-  [AppRouter.PRODUCTS.path]: new Set([Role.ADMIN]),
+  [AppRouter.PRODUCTS.path]: new Set([Role.ADMIN, Role.CLIENT]),
   [AppRouter.CARTS.path]: new Set([Role.ADMIN]),
 };
 
