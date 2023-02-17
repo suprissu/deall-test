@@ -7,6 +7,7 @@ export const Endpoints = {
   GET_PRODUCTS: withBase("/products"),
   GET_CARTS: withBase("/carts"),
   GET_CART_DETAIL: withBase("/carts/:id"),
+  USERS: withBase("/users"),
 } as const;
 
 export const AppRouter = {

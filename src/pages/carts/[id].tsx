@@ -1,6 +1,10 @@
 // #region IMPORTS
 import { DashboardTemplate } from "@/components/templates";
-import { Cart, CartDetailResponse } from "@/domains/Types.domains";
+import {
+  Cart,
+  CartDetailResponse,
+  UsersResponse,
+} from "@/domains/Types.domains";
 import { useRouter } from "next/router";
 import { BsChevronLeft } from "react-icons/bs";
 import { Table } from "@/components/atoms";
@@ -20,6 +24,8 @@ type CartDetailProps = {
   cartDetail: CartDetailResponse;
 };
 type ProductCartDetail = Cart["products"][number];
+type CartDetailResponseType = { data: CartDetailResponse | null };
+type UsersResponseType = { data: UsersResponse | null };
 // #endregion PROPS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -29,8 +35,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     if (!id) throw new Error("Cart detail not found.");
 
-    const { data } = await axios
+    const { data: cartDetail }: CartDetailResponseType = await axios
       .get(Endpoints.GET_CART_DETAIL.replace(":id", id))
+      .catch(() => {
+        return { data: null };
+      });
+
+    const { data: users }: UsersResponseType = await axios
+      .get(Endpoints.USERS)
       .catch(() => {
         return { data: null };
       });
@@ -42,9 +54,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       );
     }
 
+    const user = users?.users.find((user) => user.id === cartDetail?.id);
+
     return {
       props: {
-        cartDetail: data,
+        cartDetail: cartDetail
+          ? {
+              ...cartDetail,
+              userId: user?.username,
+            }
+          : null,
       },
     };
   });
@@ -94,11 +113,21 @@ function Cart({ cart }: CartProps) {
         <div className="pb-2 mb-2 border-b-2">
           <h4 className="font-semibold text-info-500">Detail</h4>
         </div>
-        <div className="grid grid-cols-2">
-          <p>User: {cart.userId}</p>
-          <p>Number of Items: {cart.totalQuantity}</p>
-          <p>Price: ${cart.total}</p>
-          <p>Number of Products: {cart.totalProducts}</p>
+        <div className="grid grid-cols-2 mobile:flex mobile:flex-col">
+          <p>
+            <span className="font-bold">User:</span> {cart.userId}
+          </p>
+          <p>
+            <span className="font-bold">Number of Items:</span>{" "}
+            {cart.totalQuantity}
+          </p>
+          <p>
+            <span className="font-bold">Price:</span> ${cart.total}
+          </p>
+          <p>
+            <span className="font-bold">Number of Products:</span>{" "}
+            {cart.totalProducts}
+          </p>
         </div>
       </section>
       <div>
