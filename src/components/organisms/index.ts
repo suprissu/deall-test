@@ -1,3 +1,4 @@
+import CartDetail from "./CartDetail";
 import Sidebar from "./Sidebar";
 
-export { Sidebar };
+export { CartDetail, Sidebar };
