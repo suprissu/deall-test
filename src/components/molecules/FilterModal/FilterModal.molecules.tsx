@@ -77,7 +77,6 @@ export default function Filter({ products, onFilterChange }: FilterProps) {
   }, []);
 
   const handleApplyFilter = useCallback(() => {
-    console.log("masuk");
     onFilterChange({
       title: filters.title.length !== 0 ? filters.title.join(";") : undefined,
       brand: filters.brand.length !== 0 ? filters.brand.join(";") : undefined,
