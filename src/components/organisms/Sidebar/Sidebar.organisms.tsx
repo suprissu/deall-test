@@ -76,7 +76,7 @@ export default function Sidebar() {
       <div className="flex items-center justify-center cursor-pointer">
         {!isCollapse && (
           <Link href="/" className="flex-1 p-6 hover:bg-primary-800">
-            LOGO
+            Deall Test
           </Link>
         )}
         <button onClick={toggleCollapse}>
