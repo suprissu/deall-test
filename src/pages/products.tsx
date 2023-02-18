@@ -1,3 +1,7 @@
+// TODO:  Filter should be given from Backend.
+//        Note that the list will filter manual from react-table feature.
+//        Bugs will be occured.
+
 // #region IMPORTS
 import { Input, Table } from "@/components/atoms";
 import { DashboardTemplate } from "@/components/templates";
@@ -150,37 +154,36 @@ export default function Products({
     (search?: string) => {
       if (search === "") setSearchText(search);
       const params = QueryString.stringify({
+        ...router.query,
         s: search === "" ? undefined : searchText || undefined,
-        l: qLimit,
         p: 1,
       });
       router.push(`${AppRouter.PRODUCTS.path}${params ? "?" + params : ""}`);
     },
-    [qLimit, router, searchText]
+    [router, searchText]
   );
 
   const handlePageChange = useCallback(
     (page: number) => {
       const params = QueryString.stringify({
-        s: searchText || undefined,
+        ...router.query,
         p: page,
-        l: qLimit,
       });
       router.push(`${AppRouter.PRODUCTS.path}${params ? "?" + params : ""}`);
     },
-    [qLimit, router, searchText]
+    [router]
   );
 
   const handleLimitChange = useCallback(
     (limit: string) => {
       const params = QueryString.stringify({
-        s: searchText || undefined,
+        ...router.query,
         p: 1,
         l: limit,
       });
       router.push(`${AppRouter.PRODUCTS.path}${params ? "?" + params : ""}`);
     },
-    [router, searchText]
+    [router]
   );
 
   const handleFilterChange = useCallback(
