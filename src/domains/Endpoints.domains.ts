@@ -12,6 +12,7 @@ export const Endpoints = {
 
 export const AppRouter = {
   HOME: { name: "Home", path: "/" },
+  DASHBOARD: { name: "Dashboard", path: "/dashboard" },
   LOGIN: { name: "Login", path: "/login" },
   PRODUCTS: { name: "Products", path: "/products" },
   CARTS: { name: "Carts", path: "/carts" },

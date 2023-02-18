@@ -3,6 +3,7 @@ import { AppRouter } from "@/domains/Endpoints.domains";
 import { Role } from "@/domains/Types.domains";
 import React from "react";
 import { AiOutlineShoppingCart, AiTwotoneShop } from "react-icons/ai";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
 // #endregion IMPORTS
 
 // #region STYLED COMPONENTS
@@ -21,11 +22,17 @@ export type SidebarMenuProps = {
 
 const access: Record<string, Set<Role>> = {
   [AppRouter.HOME.path]: new Set([Role.ADMIN, Role.CLIENT]),
+  [AppRouter.DASHBOARD.path]: new Set([Role.ADMIN]),
   [AppRouter.PRODUCTS.path]: new Set([Role.ADMIN, Role.CLIENT]),
   [AppRouter.CARTS.path]: new Set([Role.ADMIN]),
 };
 
 export const sidebar: Record<string, SidebarMenuProps> = {
+  [AppRouter.DASHBOARD.path]: {
+    ...AppRouter.DASHBOARD,
+    icon: <MdOutlineSpaceDashboard className={baseIconStyle} />,
+    access: access[AppRouter.DASHBOARD.path],
+  },
   [AppRouter.PRODUCTS.path]: {
     ...AppRouter.PRODUCTS,
     icon: <AiTwotoneShop className={baseIconStyle} />,
