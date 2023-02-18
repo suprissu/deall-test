@@ -17,6 +17,7 @@ import { FilterModal, Pagination } from "@/components/molecules";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
 import { CellProps, Column } from "react-table";
 import { toast } from "react-toastify";
+import ProductsTable from "@/components/molecules/ProductsTable";
 // #endregion IMPORTS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -117,40 +118,6 @@ export default function Products({
   const data: Product[] = useMemo(
     () => productsResponse?.products ?? [],
     [productsResponse]
-  );
-
-  const columns = useMemo(
-    () =>
-      [
-        {
-          accessor: "title",
-          Header: "title",
-          filter: "multiple",
-        },
-        {
-          accessor: "brand",
-          Header: "brand",
-          filter: "multiple",
-        },
-        {
-          accessor: "price",
-          Header: "price",
-          filter: "range",
-          Cell(props: CellProps<Product>) {
-            return <>{`$${props.value}`}</>;
-          },
-        },
-        {
-          accessor: "stock",
-          Header: "stock",
-        },
-        {
-          accessor: "category",
-          Header: "category",
-          filter: "multiple",
-        },
-      ] satisfies Column<Product>[],
-    []
   );
 
   const handleSearch = useCallback(
@@ -278,12 +245,7 @@ export default function Products({
               })}
             </p>
           )}
-          <Table
-            columns={columns}
-            data={data}
-            isLoading={false}
-            filterColumns={filterColumns}
-          />
+          <ProductsTable data={data} filterColumns={filterColumns} />
           <Pagination
             total={totalItems}
             page={currentPage}
