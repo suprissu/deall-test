@@ -69,10 +69,10 @@ export default function Products({
     s: qSearch,
     p: qPage,
     l: qLimit,
-    qTitle,
-    qBrand,
-    qCategory,
-    qPrice,
+    title: qTitle,
+    brand: qBrand,
+    category: qCategory,
+    price: qPrice,
   } = router.query;
   const totalItems = useMemo(
     () => productsResponse?.total ?? 0,
