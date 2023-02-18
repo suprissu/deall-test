@@ -5,6 +5,8 @@ import { env } from "@/config/Environment.config";
 import Head from "next/head";
 import { Router } from "next/router";
 import React, { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // #endregion IMPORTS
 
 // #region PROPS
@@ -52,6 +54,7 @@ export default function MainTemplate({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {loading && <Loader />}
+      <ToastContainer />
       {children}
     </AuthGuardBootstrap>
   );

@@ -6,12 +6,13 @@ import { Product, ProductResponse } from "@/domains/Types.domains";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AiOutlineCloseCircle, AiOutlineSearch } from "react-icons/ai";
 import QueryString from "qs";
 import { FilterModal, Pagination } from "@/components/molecules";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
 import { CellProps, Column } from "react-table";
+import { toast } from "react-toastify";
 // #endregion IMPORTS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -76,6 +77,16 @@ export default function Products({
     category: "",
     price: defaultPriceRange,
   });
+
+  const filterColumns = useMemo(
+    () => [
+      { id: "brand", value: filters.brand },
+      { id: "title", value: filters.title },
+      { id: "price", value: filters.price },
+      { id: "category", value: filters.category },
+    ],
+    [filters.brand, filters.category, filters.price, filters.title]
+  );
 
   const data: Product[] = useMemo(
     () => productsResponse?.products ?? [],
@@ -153,15 +164,20 @@ export default function Products({
     [router, searchText]
   );
 
-  const filterColumns = useMemo(
-    () => [
-      { id: "brand", value: filters.brand },
-      { id: "title", value: filters.title },
-      { id: "price", value: filters.price },
-      { id: "category", value: filters.category },
-    ],
-    [filters.brand, filters.category, filters.price, filters.title]
-  );
+  useEffect(() => {
+    if (
+      !productsResponse ||
+      (productsResponse.products.length === 0 && productsResponse.total)
+    ) {
+      toast.error("Failed to fetch products!", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      toast.success("Fetched products API.", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  }, [productsResponse]);
 
   return (
     <DashboardTemplate title={AppRouter.PRODUCTS.name}>

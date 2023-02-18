@@ -7,8 +7,9 @@ import { Cart, CartsResponse } from "@/domains/Types.domains";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { CellProps, Column } from "react-table";
+import { toast } from "react-toastify";
 // #endregion IMPORTS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -97,6 +98,21 @@ export default function Carts({ carts: cartsResponse }: CartsProps) {
       ] satisfies Column<Cart>[],
     [router]
   );
+
+  useEffect(() => {
+    if (
+      !cartsResponse ||
+      (cartsResponse.carts.length === 0 && cartsResponse.total)
+    ) {
+      toast.error("Failed to fetch carts!", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      toast.success("Fetched carts API.", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  }, [cartsResponse]);
 
   return (
     <DashboardTemplate title={AppRouter.CARTS.name}>

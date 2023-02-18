@@ -22,7 +22,7 @@ export default function Sidebar() {
   const { session, setSession } = useSession();
   const { width } = useWindowSize();
   const isTablet = width < 840;
-  const [isCollapse, toggleCollapse] = useToggle(false);
+  const [isCollapse, toggleCollapse] = useToggle(true);
 
   const userRoleCode = useMemo(
     () => (session ? RoleCode[session?.username] : Role.GUEST),

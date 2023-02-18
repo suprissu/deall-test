@@ -68,17 +68,15 @@ export type CartsResponse = {
 
 export type CartDetailResponse = {
   id: number;
-  products: [
-    {
-      id: number;
-      title: string;
-      price: number;
-      quantity: number;
-      total: number;
-      discountPercentage: number;
-      discountedPrice: number;
-    }
-  ];
+  products: {
+    id: number;
+    title: string;
+    price: number;
+    quantity: number;
+    total: number;
+    discountPercentage: number;
+    discountedPrice: number;
+  }[];
   total: number;
   discountedTotal: number;
   userId: number;

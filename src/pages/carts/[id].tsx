@@ -8,12 +8,13 @@ import {
 import { useRouter } from "next/router";
 import { BsChevronLeft } from "react-icons/bs";
 import { Table } from "@/components/atoms";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { GetServerSideProps } from "next";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
 import { AppRouter, Endpoints } from "@/domains/Endpoints.domains";
 import axios from "axios";
 import { CellProps, Column } from "react-table";
+import { toast } from "react-toastify";
 // #endregion IMPORTS
 
 // #region PROPS
@@ -143,6 +144,22 @@ export default function CartDetail({
   cartDetail: cartDetailResponse,
 }: CartDetailProps) {
   const router = useRouter();
+
+  useEffect(() => {
+    if (
+      !cartDetailResponse ||
+      (cartDetailResponse.products.length === 0 &&
+        cartDetailResponse.totalProducts)
+    ) {
+      toast.error("Failed to fetch cart detail!", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      toast.success("Fetched cart detail API.", {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  }, [cartDetailResponse]);
 
   return (
     <DashboardTemplate title={AppRouter.CART_DETAIL.name}>
