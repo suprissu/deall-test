@@ -3,7 +3,7 @@
 //        Bugs will be occured.
 
 // #region IMPORTS
-import { Input, Table } from "@/components/atoms";
+import { Input } from "@/components/atoms";
 import { DashboardTemplate } from "@/components/templates";
 import { AppRouter, Endpoints } from "@/domains/Endpoints.domains";
 import { Product, ProductResponse } from "@/domains/Types.domains";
@@ -13,11 +13,9 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AiOutlineCloseCircle, AiOutlineSearch } from "react-icons/ai";
 import QueryString from "qs";
-import { FilterModal, Pagination } from "@/components/molecules";
+import { FilterModal, Pagination, ProductsTable } from "@/components/molecules";
 import { withAuthGuard } from "@/bootstrap/AuthGuard.bootstrap";
-import { CellProps, Column } from "react-table";
 import { toast } from "react-toastify";
-import ProductsTable from "@/components/molecules/ProductsTable";
 // #endregion IMPORTS
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
