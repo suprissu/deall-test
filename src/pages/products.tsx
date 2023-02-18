@@ -94,12 +94,15 @@ export default function Products({
   );
 
   const [searchText, setSearchText] = useState(qSearch ?? "");
-  const [filters, setFilters] = useState<FilterTypes>({
-    title: (qTitle as string) ?? "",
-    brand: (qBrand as string) ?? "",
-    category: (qCategory as string) ?? "",
-    price: (qPrice as string) ?? "",
-  });
+  const filters = useMemo(
+    () => ({
+      title: (qTitle as string) ?? "",
+      brand: (qBrand as string) ?? "",
+      category: (qCategory as string) ?? "",
+      price: (qPrice as string) ?? "",
+    }),
+    [qBrand, qCategory, qPrice, qTitle]
+  );
 
   const filterColumns = useMemo(
     () => [
@@ -188,7 +191,7 @@ export default function Products({
 
   const handleFilterChange = useCallback(
     (data: FilterTypes) => {
-      const [min, max] = data.price!.split("-") ?? [];
+      const [min, max] = data.price?.split("-") ?? [];
       const filter = {
         ...data,
         price: data.price ? `${min}-${Number(max) || maxPrice}` : undefined,
@@ -198,7 +201,6 @@ export default function Products({
         ...filter,
       });
       router.push(`${AppRouter.PRODUCTS.path}${params ? "?" + params : ""}`);
-      setFilters(filter);
     },
     [maxPrice, router]
   );
