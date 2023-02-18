@@ -52,6 +52,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 type ProductsProps = {
   products: ProductResponse;
 };
+type FilterTypes = {
+  title: string | undefined;
+  brand: string | undefined;
+  category: string | undefined;
+  price: string | undefined;
+};
 // #endregion PROPS
 
 // #region MAIN COMPONENT
@@ -59,31 +65,44 @@ export default function Products({
   products: productsResponse,
 }: ProductsProps) {
   const router = useRouter();
-  const { s: qSearch, p: qPage, l: qLimit } = router.query;
-  const [searchText, setSearchText] = useState(qSearch ?? "");
+  const {
+    s: qSearch,
+    p: qPage,
+    l: qLimit,
+    qTitle,
+    qBrand,
+    qCategory,
+    qPrice,
+  } = router.query;
   const totalItems = useMemo(
     () => productsResponse?.total ?? 0,
     [productsResponse]
   );
+  const currentPage = useMemo(() => Number(qPage ?? 1), [qPage]);
   const limit = useMemo(() => (qLimit ? Number(qLimit) : 30), [qLimit]);
-  const defaultPriceRange = useMemo(
-    () => `0-${productsResponse.products.sort().reverse().pop()?.price}`,
+  const maxPrice = useMemo(
+    () =>
+      Math.max.apply(
+        null,
+        productsResponse.products.map((prod) => prod.price)
+      ),
     [productsResponse.products]
   );
 
-  const [filters, setFilters] = useState({
-    title: "",
-    brand: "",
-    category: "",
-    price: defaultPriceRange,
+  const [searchText, setSearchText] = useState(qSearch ?? "");
+  const [filters, setFilters] = useState<FilterTypes>({
+    title: (qTitle as string) ?? "",
+    brand: (qBrand as string) ?? "",
+    category: (qCategory as string) ?? "",
+    price: (qPrice as string) ?? "",
   });
 
   const filterColumns = useMemo(
     () => [
-      { id: "brand", value: filters.brand },
-      { id: "title", value: filters.title },
-      { id: "price", value: filters.price },
-      { id: "category", value: filters.category },
+      { id: "brand", value: filters.brand ?? "" },
+      { id: "title", value: filters.title ?? "" },
+      { id: "price", value: filters.price ?? "" },
+      { id: "category", value: filters.category ?? "" },
     ],
     [filters.brand, filters.category, filters.price, filters.title]
   );
@@ -164,6 +183,23 @@ export default function Products({
     [router, searchText]
   );
 
+  const handleFilterChange = useCallback(
+    (data: FilterTypes) => {
+      const [min, max] = data.price!.split("-") ?? [];
+      const filter = {
+        ...data,
+        price: data.price ? `${min}-${Number(max) || maxPrice}` : undefined,
+      };
+      const params = QueryString.stringify({
+        ...router.query,
+        ...filter,
+      });
+      router.push(`${AppRouter.PRODUCTS.path}${params ? "?" + params : ""}`);
+      setFilters(filter);
+    },
+    [maxPrice, router]
+  );
+
   useEffect(() => {
     if (
       !productsResponse ||
@@ -187,7 +223,7 @@ export default function Products({
           <div className="flex items-center justify-end gap-4">
             <FilterModal
               products={productsResponse}
-              onFilterChange={(data) => setFilters(data)}
+              onFilterChange={handleFilterChange}
             />
             <Input
               placeholder="Search..."
@@ -213,13 +249,11 @@ export default function Products({
               }
             />
           </div>
-          {filterColumns.some(
-            (data) => data.value !== "" && data.value !== defaultPriceRange
-          ) && (
+          {filterColumns.some((data) => data.value !== "") && (
             <p className="flex gap-2">
               Result for:
               {filterColumns?.map((data, index) => {
-                return data.value !== "" && data.value !== defaultPriceRange ? (
+                return data.value !== "" ? (
                   <span key={index}>
                     <span className="capitalize mr-2 text-primary-500">
                       {data.id}
@@ -247,7 +281,7 @@ export default function Products({
           />
           <Pagination
             total={totalItems}
-            page={Number(qPage ?? 1)}
+            page={currentPage}
             limit={limit}
             onPageChange={handlePageChange}
             onLimitChange={handleLimitChange}

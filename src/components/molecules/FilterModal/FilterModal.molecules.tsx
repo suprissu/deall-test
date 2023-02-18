@@ -9,10 +9,10 @@ import Modal from "react-modal";
 type FilterProps = {
   products: ProductResponse;
   onFilterChange: (data: {
-    title: string;
-    brand: string;
-    category: string;
-    price: string;
+    title: string | undefined;
+    brand: string | undefined;
+    category: string | undefined;
+    price: string | undefined;
   }) => void;
 };
 
@@ -24,7 +24,7 @@ export default function Filter({ products, onFilterChange }: FilterProps) {
     brand: [],
     category: [],
   });
-  const [priceRange, setPriceRange] = useState({ min: "0", max: "0" });
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
 
   const productsOptions = useMemo(
     () => [...new Set([...products.products.map((data) => data.title)])],
@@ -78,10 +78,14 @@ export default function Filter({ products, onFilterChange }: FilterProps) {
 
   const handleApplyFilter = useCallback(() => {
     onFilterChange({
-      title: filters.title.join(";"),
-      brand: filters.brand.join(";"),
-      category: filters.category.join(";"),
-      price: `${priceRange.min}-${priceRange.max}`,
+      title: filters.title.length !== 0 ? filters.title.join(";") : undefined,
+      brand: filters.brand.length !== 0 ? filters.brand.join(";") : undefined,
+      category:
+        filters.category.length !== 0 ? filters.category.join(";") : undefined,
+      price:
+        priceRange.min !== 0 || priceRange.max !== 0
+          ? `${priceRange.min}-${priceRange.max}`
+          : undefined,
     });
     setFilterShow(false);
   }, [
@@ -152,19 +156,27 @@ export default function Filter({ products, onFilterChange }: FilterProps) {
             <div className="flex items-center gap-2 border-t pt-2 mt-2">
               <Input
                 value={priceRange.min}
+                type="number"
                 placeholder="Min Price ($0)"
                 onChange={(e) => {
-                  setPriceRange((prev) => ({ ...prev, min: e.target.value }));
+                  setPriceRange((prev) => ({
+                    ...prev,
+                    min: Number(e.target.value),
+                  }));
                 }}
               />
               {"-"}
               <Input
                 value={priceRange.max}
+                type="number"
                 placeholder={`Max Price ($${
                   products.products.sort().reverse().pop()?.price
                 })`}
                 onChange={(e) => {
-                  setPriceRange((prev) => ({ ...prev, max: e.target.value }));
+                  setPriceRange((prev) => ({
+                    ...prev,
+                    max: Number(e.target.value),
+                  }));
                 }}
               />
             </div>

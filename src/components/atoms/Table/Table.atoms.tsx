@@ -97,6 +97,7 @@ const TableDashboard: React.FC<TableDashboardProps> = ({
         },
         range: (rows, columnIds, filterValue) => {
           // Filter format must be {min}-{max}
+          if (filterValue === "") return rows;
           const [min, max] = filterValue.split("-");
           const filteredRows = rows.filter(
             (row) =>
